@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" fill="#0a0a0a"/>
+  <rect x="10" y="10" width="172" height="172" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+  <text x="96" y="130" font-family="Impact, 'Helvetica Neue', Arial, sans-serif" font-size="150" font-weight="900" fill="#e8d5a3" text-anchor="middle" letter-spacing="-6">N</text>
+  <text x="96" y="170" font-family="'Courier New', monospace" font-size="9" fill="#6a6560" letter-spacing="3" text-anchor="middle">NONSENSE</text>
+</svg>

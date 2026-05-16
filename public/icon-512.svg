@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#0a0a0a"/>
+  <rect x="28" y="28" width="456" height="456" fill="none" stroke="#2a2a2a" stroke-width="2"/>
+  <text x="256" y="350" font-family="Impact, 'Helvetica Neue', Arial, sans-serif" font-size="400" font-weight="900" fill="#e8d5a3" text-anchor="middle" letter-spacing="-16">N</text>
+  <text x="256" y="450" font-family="'Courier New', monospace" font-size="22" fill="#6a6560" letter-spacing="8" text-anchor="middle">NONSENSE</text>
+  <text x="256" y="478" font-family="'Courier New', monospace" font-size="12" fill="#6a6560" letter-spacing="4" text-anchor="middle">PRODUCTION CALENDAR</text>
+</svg>
