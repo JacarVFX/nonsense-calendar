@@ -1,15 +1,8 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/__/auth/:path*",
-      "destination": "https://nonsense-calendar.firebaseapp.com/__/auth/:path*"
-    },
-    {
-      "source": "/__/firebase/:path*",
-      "destination": "https://nonsense-calendar.firebaseapp.com/__/firebase/:path*"
-    },
-    {
-      "source": "/((?!manifest\\.json|icon-.*\\.svg|assets/.*|sw\\.js|workbox-.*\\.js|favicon.*|__/.*).*)",
+      "source": "/((?!manifest\\.json|icon-.*\\.svg|assets/.*|sw\\.js|workbox-.*\\.js|favicon.*).*)",
       "destination": "/"
     }
   ],
