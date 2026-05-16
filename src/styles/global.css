@@ -90,6 +90,17 @@ input, select, textarea { font: inherit; }
   color: var(--muted);
   margin-top: 20px;
 }
+.auth-error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--cat-ent-fg);
+  line-height: 1.5;
+  text-align: left;
+  border: 1px solid var(--cat-ent-bg);
+  padding: 14px;
+  margin-top: 8px;
+}
 
 /* ---------- App layout ---------- */
 .app {

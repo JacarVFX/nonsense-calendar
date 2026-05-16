@@ -12,7 +12,7 @@ const CATEGORIES = [
   { value: 'other', label: 'OTRO' },
 ]
 
-export default function EventModal({ user, event, defaultDate, onClose, onError }) {
+export default function EventModal({ event, defaultDate, onClose, onError }) {
   const isEdit = !!event
   const [name, setName] = useState(event?.name || '')
   const [date, setDate] = useState(event?.date || defaultDate || '')
@@ -40,9 +40,9 @@ export default function EventModal({ user, event, defaultDate, onClose, onError 
         updatedAt: serverTimestamp(),
       }
       if (isEdit) {
-        await updateDoc(doc(db, `users/${user.uid}/events/${event.id}`), data)
+        await updateDoc(doc(db, 'events', event.id), data)
       } else {
-        await addDoc(collection(db, `users/${user.uid}/events`), {
+        await addDoc(collection(db, 'events'), {
           ...data,
           createdAt: serverTimestamp(),
         })
@@ -60,7 +60,7 @@ export default function EventModal({ user, event, defaultDate, onClose, onError 
     if (!window.confirm('¿Borrar este evento? Esta acción no se puede deshacer.')) return
     setDeleting(true)
     try {
-      await deleteDoc(doc(db, `users/${user.uid}/events/${event.id}`))
+      await deleteDoc(doc(db, 'events', event.id))
       onClose()
     } catch (err) {
       console.error(err)

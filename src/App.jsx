@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
-import { onAuthStateChanged, signOut, getRedirectResult } from 'firebase/auth'
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth'
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 import { auth, db } from './firebase'
-import Login from './components/Login'
 import Calendar from './components/Calendar'
 import Sidebar from './components/Sidebar'
 import EventModal from './components/EventModal'
@@ -16,8 +15,8 @@ function todayStr() {
 }
 
 export default function App() {
-  const [user, setUser] = useState(null)
   const [authReady, setAuthReady] = useState(false)
+  const [authError, setAuthError] = useState(null)
   const [events, setEvents] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [modalOpen, setModalOpen] = useState(false)
@@ -25,31 +24,33 @@ export default function App() {
   const [defaultDate, setDefaultDate] = useState(null)
   const [toast, setToast] = useState(null)
 
-  useEffect(() => {
-    return onAuthStateChanged(auth, (u) => {
-      setUser(u)
-      setAuthReady(true)
-    })
-  }, [])
-
   const showToast = useCallback((msg) => {
     setToast(msg)
     setTimeout(() => setToast(null), 3500)
   }, [])
 
   useEffect(() => {
-    getRedirectResult(auth).catch((err) => {
-      console.error('Redirect sign-in error:', err)
-      showToast('Error al completar el inicio de sesión')
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (u) {
+        setAuthReady(true)
+      } else {
+        signInAnonymously(auth).catch((err) => {
+          console.error('Anonymous sign-in failed:', err)
+          setAuthError(
+            err?.code === 'auth/admin-restricted-operation'
+              ? 'Activa "Anonymous" en Firebase Console → Authentication → Sign-in method.'
+              : 'No se pudo conectar con la base de datos. Recarga la página.'
+          )
+          setAuthReady(true)
+        })
+      }
     })
-  }, [showToast])
+    return unsub
+  }, [])
 
   useEffect(() => {
-    if (!user) {
-      setEvents([])
-      return
-    }
-    const q = query(collection(db, `users/${user.uid}/events`), orderBy('date'))
+    if (!authReady || authError) return
+    const q = query(collection(db, 'events'), orderBy('date'))
     return onSnapshot(
       q,
       (snap) => setEvents(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
@@ -58,7 +59,7 @@ export default function App() {
         showToast('Error de conexión con la base de datos')
       }
     )
-  }, [user, showToast])
+  }, [authReady, authError, showToast])
 
   const openNewEvent = useCallback((dateStr) => {
     setEditingEvent(null)
@@ -86,8 +87,17 @@ export default function App() {
     )
   }
 
-  if (!user) {
-    return <Login onError={showToast} />
+  if (authError) {
+    return (
+      <div className="loading-screen">
+        <div className="login-box">
+          <h1 className="logo login-logo">NONSENSE</h1>
+          <div className="subtitle">PRODUCTION CALENDAR</div>
+          <div className="login-divider"></div>
+          <div className="auth-error">{authError}</div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -96,10 +106,6 @@ export default function App() {
         <div className="logo-block">
           <h1 className="logo">NONSENSE</h1>
           <div className="subtitle">PRODUCTION CALENDAR</div>
-        </div>
-        <div className="user-block">
-          <span className="user-email">{user.email}</span>
-          <button className="btn-ghost" onClick={() => signOut(auth)}>SALIR</button>
         </div>
       </header>
 
@@ -121,7 +127,6 @@ export default function App() {
 
       {modalOpen && (
         <EventModal
-          user={user}
           event={editingEvent}
           defaultDate={defaultDate}
           onClose={closeModal}
