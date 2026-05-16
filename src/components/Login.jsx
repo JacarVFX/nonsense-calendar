@@ -1,6 +1,9 @@
 import { useState } from 'react'
-import { signInWithPopup } from 'firebase/auth'
+import { signInWithPopup, signInWithRedirect } from 'firebase/auth'
 import { auth, googleProvider } from '../firebase'
+
+const isMobile = typeof navigator !== 'undefined'
+  && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
 
 export default function Login({ onError }) {
   const [loading, setLoading] = useState(false)
@@ -8,7 +11,11 @@ export default function Login({ onError }) {
   const handleLogin = async () => {
     setLoading(true)
     try {
-      await signInWithPopup(auth, googleProvider)
+      if (isMobile) {
+        await signInWithRedirect(auth, googleProvider)
+      } else {
+        await signInWithPopup(auth, googleProvider)
+      }
     } catch (err) {
       console.error(err)
       if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {

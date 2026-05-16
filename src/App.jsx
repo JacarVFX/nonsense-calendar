@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { onAuthStateChanged, signOut, getRedirectResult } from 'firebase/auth'
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 import { auth, db } from './firebase'
 import Login from './components/Login'
@@ -36,6 +36,13 @@ export default function App() {
     setToast(msg)
     setTimeout(() => setToast(null), 3500)
   }, [])
+
+  useEffect(() => {
+    getRedirectResult(auth).catch((err) => {
+      console.error('Redirect sign-in error:', err)
+      showToast('Error al completar el inicio de sesión')
+    })
+  }, [showToast])
 
   useEffect(() => {
     if (!user) {
