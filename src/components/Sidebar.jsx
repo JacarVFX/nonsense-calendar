@@ -5,6 +5,11 @@ function formatShortDate(d) {
   return `${day} ${M_SHORT[parseInt(m, 10) - 1]}`
 }
 
+function formatRange(start, end) {
+  if (!end || end === start) return formatShortDate(start)
+  return `${formatShortDate(start)} → ${formatShortDate(end)}`
+}
+
 function todayStr() {
   const d = new Date()
   const y = d.getFullYear()
@@ -13,24 +18,32 @@ function todayStr() {
   return `${y}-${m}-${day}`
 }
 
+// An event "is in month" if its date range overlaps the given month
+function overlapsMonth(ev, year, month) {
+  const start = ev.date
+  const end = ev.dateEnd || ev.date
+  const monthStart = `${year}-${String(month + 1).padStart(2, '0')}-01`
+  const lastDay = new Date(year, month + 1, 0).getDate()
+  const monthEnd = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+  return end >= monthStart && start <= monthEnd
+}
+
 export default function Sidebar({ currentDate, events, onNewEvent, onEventClick }) {
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
 
-  const monthEvents = events.filter((ev) => {
-    const [y, m] = ev.date.split('-').map(Number)
-    return y === year && m === month + 1
-  })
+  const monthEvents = events.filter((ev) => overlapsMonth(ev, year, month))
 
   const stats = {
     total: monthEvents.length,
     grab: monthEvents.filter((e) => e.cat === 'grab').length,
-    ent: monthEvents.filter((e) => e.cat === 'ent').length,
+    edit: monthEvents.filter((e) => e.cat === 'edit').length,
+    dead: monthEvents.filter((e) => e.cat === 'dead').length,
   }
 
   const today = todayStr()
   const upcoming = events
-    .filter((e) => e.date >= today)
+    .filter((e) => (e.dateEnd || e.date) >= today)
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 8)
 
@@ -49,8 +62,12 @@ export default function Sidebar({ currentDate, events, onNewEvent, onEventClick 
           <span className="stat-val">{stats.grab}</span>
         </div>
         <div className="stat-row">
-          <span className="stat-label">ENTREGAS</span>
-          <span className="stat-val">{stats.ent}</span>
+          <span className="stat-label">EDICIONES</span>
+          <span className="stat-val">{stats.edit}</span>
+        </div>
+        <div className="stat-row">
+          <span className="stat-label">DEADLINES</span>
+          <span className="stat-val">{stats.dead}</span>
         </div>
       </div>
 
@@ -58,10 +75,9 @@ export default function Sidebar({ currentDate, events, onNewEvent, onEventClick 
         <h3 className="panel-title">CATEGORÍAS</h3>
         <div className="legend">
           <div className="legend-item"><span className="dot cat-grab" /><span>GRABACIÓN</span></div>
+          <div className="legend-item"><span className="dot cat-edit" /><span>EDICIÓN</span></div>
           <div className="legend-item"><span className="dot cat-meet" /><span>REUNIÓN</span></div>
-          <div className="legend-item"><span className="dot cat-ent" /><span>ENTREGA</span></div>
           <div className="legend-item"><span className="dot cat-dead" /><span>DEADLINE</span></div>
-          <div className="legend-item"><span className="dot cat-other" /><span>OTRO</span></div>
         </div>
       </div>
 
@@ -75,7 +91,7 @@ export default function Sidebar({ currentDate, events, onNewEvent, onEventClick 
               <button key={ev.id} className="upcoming-item" onClick={() => onEventClick(ev)}>
                 <span className={`dot cat-${ev.cat}`} />
                 <div className="upcoming-info">
-                  <div className="upcoming-date">{formatShortDate(ev.date)}</div>
+                  <div className="upcoming-date">{formatRange(ev.date, ev.dateEnd)}</div>
                   <div className="upcoming-name">{ev.name}</div>
                 </div>
               </button>

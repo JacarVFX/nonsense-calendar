@@ -1,25 +1,29 @@
 import { useState, useEffect } from 'react'
 import {
-  collection, doc, addDoc, updateDoc, deleteDoc, serverTimestamp,
+  collection, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, deleteField,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 
 const CATEGORIES = [
-  { value: 'grab', label: 'GRABACIÓN' },
-  { value: 'meet', label: 'REUNIÓN' },
-  { value: 'ent', label: 'ENTREGA' },
-  { value: 'dead', label: 'DEADLINE' },
-  { value: 'other', label: 'OTRO' },
+  { value: 'grab', label: 'GRABACIÓN', multiDay: true },
+  { value: 'edit', label: 'EDICIÓN', multiDay: true },
+  { value: 'meet', label: 'REUNIÓN', multiDay: false },
+  { value: 'dead', label: 'DEADLINE', multiDay: false },
 ]
+
+const isMultiDayCat = (cat) => CATEGORIES.find((c) => c.value === cat)?.multiDay === true
 
 export default function EventModal({ event, defaultDate, onClose, onError }) {
   const isEdit = !!event
   const [name, setName] = useState(event?.name || '')
   const [date, setDate] = useState(event?.date || defaultDate || '')
+  const [dateEnd, setDateEnd] = useState(event?.dateEnd || event?.date || defaultDate || '')
   const [cat, setCat] = useState(event?.cat || 'grab')
   const [note, setNote] = useState(event?.note || '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+
+  const multiDay = isMultiDayCat(cat)
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -27,9 +31,18 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  // Keep dateEnd >= date
+  useEffect(() => {
+    if (date && (!dateEnd || dateEnd < date)) setDateEnd(date)
+  }, [date, dateEnd])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!name.trim() || !date) return
+    if (multiDay && dateEnd < date) {
+      onError('La fecha fin no puede ser antes que la fecha inicio')
+      return
+    }
     setSaving(true)
     try {
       const data = {
@@ -38,6 +51,11 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
         cat,
         note: note.trim(),
         updatedAt: serverTimestamp(),
+      }
+      if (multiDay && dateEnd && dateEnd > date) {
+        data.dateEnd = dateEnd
+      } else if (isEdit && event.dateEnd) {
+        data.dateEnd = deleteField()
       }
       if (isEdit) {
         await updateDoc(doc(db, 'events', event.id), data)
@@ -86,16 +104,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
               maxLength={120}
             />
           </label>
-          <label className="field">
-            <span className="label">FECHA</span>
-            <input
-              className="input"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
-          </label>
+
           <label className="field">
             <span className="label">CATEGORÍA</span>
             <select className="input" value={cat} onChange={(e) => setCat(e.target.value)}>
@@ -104,6 +113,44 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
               ))}
             </select>
           </label>
+
+          {multiDay ? (
+            <div className="field-row">
+              <label className="field">
+                <span className="label">FECHA INICIO</span>
+                <input
+                  className="input"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="field">
+                <span className="label">FECHA FIN</span>
+                <input
+                  className="input"
+                  type="date"
+                  value={dateEnd}
+                  min={date}
+                  onChange={(e) => setDateEnd(e.target.value)}
+                  required
+                />
+              </label>
+            </div>
+          ) : (
+            <label className="field">
+              <span className="label">FECHA</span>
+              <input
+                className="input"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+              />
+            </label>
+          )}
+
           <label className="field">
             <span className="label">NOTAS (OPCIONAL)</span>
             <textarea

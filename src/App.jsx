@@ -5,6 +5,7 @@ import { auth, db } from './firebase'
 import Calendar from './components/Calendar'
 import Sidebar from './components/Sidebar'
 import EventModal from './components/EventModal'
+import InstallHint from './components/InstallHint'
 
 function todayStr() {
   const d = new Date()
@@ -135,6 +136,7 @@ export default function App() {
       )}
 
       {toast && <div className="toast">{toast}</div>}
+      <InstallHint />
     </div>
   )
 }

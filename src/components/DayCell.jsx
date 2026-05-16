@@ -1,6 +1,6 @@
-export default function DayCell({ cell, events, isToday, onDayClick, onEventClick }) {
-  const visible = events.slice(0, 2)
-  const extra = events.length - visible.length
+export default function DayCell({ cell, entries, isToday, onDayClick, onEventClick }) {
+  const visible = entries.slice(0, 2)
+  const extra = entries.length - visible.length
 
   const handleCellClick = () => onDayClick(cell.dateStr)
 
@@ -11,10 +11,10 @@ export default function DayCell({ cell, events, isToday, onDayClick, onEventClic
     >
       <div className="day-number">{cell.day}</div>
       <div className="events">
-        {visible.map((ev) => (
+        {visible.map(({ ev, isFirst }) => (
           <button
             key={ev.id}
-            className={`event-pill cat-${ev.cat}`}
+            className={`event-pill cat-${ev.cat} ${isFirst ? '' : 'cont'}`}
             onClick={(e) => { e.stopPropagation(); onEventClick(ev) }}
             title={ev.name}
           >
