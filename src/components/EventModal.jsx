@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   collection, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, deleteField,
 } from 'firebase/firestore'
-import { db } from '../firebase'
+import { db, auth } from '../firebase'
 
 const CATEGORIES = [
   { value: 'grab', label: 'GRABACIÓN', multiDay: true },
@@ -44,6 +44,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
       return
     }
     setSaving(true)
+    console.log('[nonsense] save:start', { isEdit, uid: auth?.currentUser?.uid, cat, date, dateEnd })
     try {
       const data = {
         name: name.trim(),
@@ -58,17 +59,21 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
         data.dateEnd = deleteField()
       }
       if (isEdit) {
+        console.log('[nonsense] save:updateDoc')
         await updateDoc(doc(db, 'events', event.id), data)
       } else {
-        await addDoc(collection(db, 'events'), {
+        console.log('[nonsense] save:addDoc')
+        const ref = await addDoc(collection(db, 'events'), {
           ...data,
           createdAt: serverTimestamp(),
         })
+        console.log('[nonsense] save:addDoc OK', ref.id)
       }
+      console.log('[nonsense] save:done')
       onClose()
     } catch (err) {
-      console.error(err)
-      onError('Error al guardar el evento')
+      console.error('[nonsense] save:ERROR', err?.code, err?.message, err)
+      onError(`Error al guardar: ${err?.code || err?.message || 'unknown'}`)
       setSaving(false)
     }
   }

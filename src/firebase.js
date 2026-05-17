@@ -14,9 +14,17 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 
-// experimentalAutoDetectLongPolling sidesteps the WebChannel handshake
+// Force long polling — definitively sidesteps the WebChannel handshake
 // loop that some browser/network combos trigger (third-party cookie
-// blocking, ad-blockers, corporate proxies, etc.).
+// blocking, ad-blockers, corporate proxies, etc.). Slightly higher
+// latency than WebChannel but stable everywhere.
 export const db = initializeFirestore(app, {
-  experimentalAutoDetectLongPolling: true,
+  experimentalForceLongPolling: true,
 })
+
+// Debug exposure — read these from console:
+//   __nsdebug.auth.currentUser?.uid  → current anon user id (or undefined)
+//   __nsdebug.db                     → firestore instance
+if (typeof window !== 'undefined') {
+  window.__nsdebug = { auth, db, app }
+}
