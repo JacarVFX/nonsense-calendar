@@ -1,8 +1,8 @@
 import DayCell from './DayCell'
 
 const MONTHS = [
-  'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-  'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE',
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
 ]
 const WEEKDAYS = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM']
 
@@ -74,7 +74,7 @@ export default function Calendar({ currentDate, setCurrentDate, events, onDayCli
       <div className="calendar-nav">
         <button className="btn-ghost" onClick={prev} aria-label="Mes anterior">← PREV</button>
         <div className="month-title-wrap">
-          <h2 className="month-title">{MONTHS[month]} <span className="year">{year}</span></h2>
+          <h2 className="month-title">{MONTHS[month]}<span className="year">{year}</span></h2>
           <button className="btn-today" onClick={goToday}>HOY</button>
         </div>
         <button className="btn-ghost" onClick={next} aria-label="Mes siguiente">NEXT →</button>

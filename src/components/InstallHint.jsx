@@ -29,12 +29,12 @@ export default function InstallHint() {
   return (
     <div className="install-hint">
       <div className="install-hint-text">
-        Para usarlo como <strong>app sin barra</strong>: toca{' '}
+        <strong>0501</strong> · instalar como app: toca{' '}
         <svg className="install-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M12 16V4M12 4l-4 4M12 4l4 4" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        Compartir → "Añadir a pantalla de inicio"
+        compartir → añadir a pantalla de inicio
       </div>
       <button className="install-hint-close" onClick={dismiss} aria-label="Cerrar">×</button>
     </div>

@@ -61,8 +61,14 @@ export default function App() {
     <div className="app">
       <header className="header">
         <div className="logo-block">
-          <h1 className="logo">NONSENSE</h1>
-          <div className="subtitle">PRODUCTION CALENDAR</div>
+          <h1 className="logo" aria-label="Nonsense">
+            N<span className="slashed">Ø</span>NSENSE
+          </h1>
+          <div className="subtitle">PRODUCTION CALENDAR · 0001</div>
+        </div>
+        <div className="header-meta">
+          NS / CAL<br />
+          REV 0001 — 2026
         </div>
       </header>
 

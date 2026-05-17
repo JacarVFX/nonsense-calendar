@@ -38,6 +38,7 @@ export default function Sidebar({ currentDate, events, onNewEvent, onEventClick 
     total: monthEvents.length,
     grab: monthEvents.filter((e) => e.cat === 'grab').length,
     edit: monthEvents.filter((e) => e.cat === 'edit').length,
+    meet: monthEvents.filter((e) => e.cat === 'meet').length,
     dead: monthEvents.filter((e) => e.cat === 'dead').length,
   }
 
@@ -49,40 +50,62 @@ export default function Sidebar({ currentDate, events, onNewEvent, onEventClick 
 
   return (
     <aside className="sidebar">
-      <button className="btn-primary block" onClick={onNewEvent}>+ AÑADIR TRABAJO</button>
+      <button className="btn-primary block" onClick={onNewEvent}>añadir trabajo</button>
 
       <div className="panel">
-        <h3 className="panel-title">ESTADÍSTICAS DEL MES</h3>
+        <h3 className="panel-title">
+          <span className="code-tag">0211</span> estadísticas mes
+        </h3>
         <div className="stat-row">
           <span className="stat-label">TOTAL</span>
-          <span className="stat-val">{stats.total}</span>
+          <span className="stat-val">{String(stats.total).padStart(2, '0')}</span>
         </div>
         <div className="stat-row">
-          <span className="stat-label">GRABACIONES</span>
-          <span className="stat-val">{stats.grab}</span>
+          <span className="stat-label">GRABACIÓN</span>
+          <span className="stat-val">{String(stats.grab).padStart(2, '0')}</span>
         </div>
         <div className="stat-row">
-          <span className="stat-label">EDICIONES</span>
-          <span className="stat-val">{stats.edit}</span>
+          <span className="stat-label">EDICIÓN</span>
+          <span className="stat-val">{String(stats.edit).padStart(2, '0')}</span>
         </div>
         <div className="stat-row">
-          <span className="stat-label">DEADLINES</span>
-          <span className="stat-val">{stats.dead}</span>
+          <span className="stat-label">REUNIÓN</span>
+          <span className="stat-val">{String(stats.meet).padStart(2, '0')}</span>
+        </div>
+        <div className="stat-row">
+          <span className="stat-label">DEADLINE</span>
+          <span className="stat-val">{String(stats.dead).padStart(2, '0')}</span>
         </div>
       </div>
 
       <div className="panel">
-        <h3 className="panel-title">CATEGORÍAS</h3>
+        <h3 className="panel-title">
+          <span className="code-tag">0212</span> categorías
+        </h3>
         <div className="legend">
-          <div className="legend-item"><span className="dot cat-grab" /><span>GRABACIÓN</span></div>
-          <div className="legend-item"><span className="dot cat-edit" /><span>EDICIÓN</span></div>
-          <div className="legend-item"><span className="dot cat-meet" /><span>REUNIÓN</span></div>
-          <div className="legend-item"><span className="dot cat-dead" /><span>DEADLINE</span></div>
+          <div className="legend-item">
+            <span className="dot cat-grab" />
+            <span><span className="code-tag">0111</span> GRABACIÓN</span>
+          </div>
+          <div className="legend-item">
+            <span className="dot cat-edit" />
+            <span><span className="code-tag">0112</span> EDICIÓN</span>
+          </div>
+          <div className="legend-item">
+            <span className="dot cat-meet" />
+            <span><span className="code-tag">0113</span> REUNIÓN</span>
+          </div>
+          <div className="legend-item">
+            <span className="dot cat-dead" />
+            <span><span className="code-tag">0114</span> DEADLINE</span>
+          </div>
         </div>
       </div>
 
       <div className="panel">
-        <h3 className="panel-title">PRÓXIMOS</h3>
+        <h3 className="panel-title">
+          <span className="code-tag">0213</span> próximos
+        </h3>
         {upcoming.length === 0 ? (
           <div className="empty">SIN EVENTOS PRÓXIMOS</div>
         ) : (

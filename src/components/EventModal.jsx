@@ -5,10 +5,10 @@ import {
 import { db } from '../firebase'
 
 const CATEGORIES = [
-  { value: 'grab', label: 'GRABACIÓN', multiDay: true },
-  { value: 'edit', label: 'EDICIÓN', multiDay: true },
-  { value: 'meet', label: 'REUNIÓN', multiDay: false },
-  { value: 'dead', label: 'DEADLINE', multiDay: false },
+  { value: 'grab', label: '0111 — GRABACIÓN', multiDay: true },
+  { value: 'edit', label: '0112 — EDICIÓN', multiDay: true },
+  { value: 'meet', label: '0113 — REUNIÓN', multiDay: false },
+  { value: 'dead', label: '0114 — DEADLINE', multiDay: false },
 ]
 
 const isMultiDayCat = (cat) => CATEGORIES.find((c) => c.value === cat)?.multiDay === true
@@ -95,10 +95,13 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-        <h2 className="modal-title">{isEdit ? 'EDITAR TRABAJO' : 'NUEVO TRABAJO'}</h2>
+        <h2 className="modal-title">
+          <span className="code-tag">{isEdit ? '0302 — REGISTRO' : '0301 — REGISTRO'}</span>
+          {isEdit ? 'editar trabajo' : 'nuevo trabajo'}
+        </h2>
         <form onSubmit={handleSubmit}>
           <label className="field">
-            <span className="label">NOMBRE / CLIENTE</span>
+            <span className="label">0401 — NOMBRE / CLIENTE</span>
             <input
               className="input"
               type="text"
@@ -111,7 +114,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
           </label>
 
           <label className="field">
-            <span className="label">CATEGORÍA</span>
+            <span className="label">0402 — CATEGORÍA</span>
             <select className="input" value={cat} onChange={(e) => setCat(e.target.value)}>
               {CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>{c.label}</option>
@@ -122,7 +125,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
           {multiDay ? (
             <div className="field-row">
               <label className="field">
-                <span className="label">FECHA INICIO</span>
+                <span className="label">0403 — FECHA INICIO</span>
                 <input
                   className="input"
                   type="date"
@@ -132,7 +135,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
                 />
               </label>
               <label className="field">
-                <span className="label">FECHA FIN</span>
+                <span className="label">0404 — FECHA FIN</span>
                 <input
                   className="input"
                   type="date"
@@ -145,7 +148,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
             </div>
           ) : (
             <label className="field">
-              <span className="label">FECHA</span>
+              <span className="label">0403 — FECHA</span>
               <input
                 className="input"
                 type="date"
@@ -157,7 +160,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
           )}
 
           <label className="field">
-            <span className="label">NOTAS (OPCIONAL)</span>
+            <span className="label">0405 — NOTAS (OPCIONAL)</span>
             <textarea
               className="input textarea"
               value={note}
@@ -182,7 +185,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
               CANCELAR
             </button>
             <button type="submit" className="btn-primary" disabled={saving || deleting}>
-              {saving ? 'GUARDANDO...' : 'GUARDAR'}
+              {saving ? 'guardando…' : 'guardar'}
             </button>
           </div>
         </form>
