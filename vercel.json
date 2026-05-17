@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/((?!manifest\\.json|icon-.*\\.svg|assets/.*|sw\\.js|workbox-.*\\.js|favicon.*).*)",
+      "source": "/((?!manifest\\.json|icon-.*\\.svg|assets/.*|firmas/.*|sw\\.js|workbox-.*\\.js|favicon.*|contratos|contratos\\.html|contrato|contrato\\.html|llave|llave\\.html).*)",
       "destination": "/"
     }
   ],

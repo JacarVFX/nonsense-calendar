@@ -13,7 +13,16 @@ export default defineConfig({
       includeAssets: ['icon-192.svg', 'icon-512.svg', 'manifest.json'],
       workbox: {
         navigateFallback: '/index.html',
+        // No interceptar las páginas standalone — que se sirvan desde red
+        navigateFallbackDenylist: [
+          /^\/contratos?(\.html|\/|$|\?)/,
+          /^\/contrato(\.html|\/|$|\?)/,
+          /^\/llave(\.html|\/|$|\?)/,
+          /^\/firmas\//,
+        ],
         globPatterns: ['**/*.{js,css,html,svg,json,woff2}'],
+        // No precachear los HTML standalone (siempre desde red)
+        globIgnores: ['contratos.html', 'contrato.html', 'llave.html'],
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
