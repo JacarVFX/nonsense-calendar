@@ -12,11 +12,13 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 
+// Database ID is literally "default" (named database), not "(default)".
+// Firebase Console created it that way when the user set up Firestore.
 // Force long polling — sidesteps the WebChannel handshake loop that
 // some browser/network combos trigger.
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
-})
+}, 'default')
 
 // Debug exposure — read from console:
 //   __nsdebug.db → firestore instance
