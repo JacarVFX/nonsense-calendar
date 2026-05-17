@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#222222" />
+  <title>Nonsense — Editor de contratos · 0701</title>
+
+  <!-- Neue Haas Grotesk vía Adobe Fonts (kit ciq6vij) + Inter fallback -->
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/ciq6vij.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ns-black: #222222;
+      --ns-acid: #C9ED19;
+      --ns-cream: #EDEDE1;
+      --ns-cream-2: #e2e2d4;
+      --ns-taupe: #A99C8B;
+      --ns-muted: rgba(34, 34, 34, 0.55);
+      --tr-black: -0.05em;
+      --tr-code: 0.06em;
+      --font: 'neue-haas-grotesk-display', 'Inter', 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--ns-cream);
+      color: var(--ns-black);
+      font-family: var(--font);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .header {
+      position: relative;
+      padding: 22px 32px;
+      background: var(--ns-black);
+      color: var(--ns-cream);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -3px;
+      height: 3px;
+      background: var(--ns-acid);
+    }
+    .logo {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: var(--tr-black);
+      line-height: 0.95;
+    }
+    .logo .slashed { color: var(--ns-acid); }
+    .subtitle {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      margin-top: 5px;
+    }
+    .header-meta {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.5;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-decoration: none;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      transition: color 0.12s;
+    }
+    .back-link:hover { color: var(--ns-acid); }
+
+    /* MAIN */
+    main {
+      flex: 1;
+      padding: 40px 32px 80px;
+      display: flex;
+      justify-content: center;
+    }
+    .form-wrap {
+      width: 100%;
+      max-width: 680px;
+      position: relative;
+    }
+    /* Marcas de registro */
+    .reg-mark {
+      position: absolute;
+      font-size: 14px;
+      color: var(--ns-taupe);
+      pointer-events: none;
+      line-height: 1;
+      user-select: none;
+    }
+    .reg-mark.tl { top: -14px; left: -14px; }
+    .reg-mark.tr { top: -14px; right: -14px; }
+    .reg-mark.bl { bottom: -14px; left: -14px; }
+    .reg-mark.br { bottom: -14px; right: -14px; }
+
+    .form-card {
+      background: var(--ns-cream);
+      border: 1px solid var(--ns-black);
+      padding: 36px 32px 32px;
+      position: relative;
+    }
+    .form-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 56px; height: 4px;
+      background: var(--ns-acid);
+    }
+    .form-title {
+      font-weight: 900;
+      font-size: 56px;
+      letter-spacing: var(--tr-black);
+      line-height: 0.9;
+      text-transform: lowercase;
+      color: var(--ns-black);
+      margin-bottom: 6px;
+    }
+    .form-code {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 36px;
+    }
+
+    .field-group {
+      margin-bottom: 22px;
+    }
+    label, .label {
+      display: block;
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-black);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    label .code-tag {
+      color: var(--ns-taupe);
+      font-weight: 400;
+      margin-right: 6px;
+    }
+    input[type="text"], input[type="date"], input[type="number"], textarea {
+      width: 100%;
+      background: var(--ns-cream);
+      border: 1px solid var(--ns-black);
+      padding: 11px 12px;
+      color: var(--ns-black);
+      font-family: var(--font);
+      font-weight: 500;
+      font-size: 14px;
+      outline: none;
+      border-radius: 0;
+      transition: box-shadow 0.12s;
+      font-variant-numeric: tabular-nums;
+    }
+    textarea { resize: vertical; min-height: 76px; }
+    input:focus, textarea:focus {
+      box-shadow: inset 0 -3px 0 var(--ns-acid);
+    }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .row-ref {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: stretch;
+    }
+    .btn-mini {
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      background: transparent;
+      color: var(--ns-black);
+      border: 1px solid var(--ns-black);
+      padding: 0 14px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      white-space: nowrap;
+    }
+    .btn-mini:hover { background: var(--ns-black); color: var(--ns-cream); }
+
+    /* Firmante toggle */
+    .firmante-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--ns-black);
+    }
+    .firmante-btn {
+      background: var(--ns-cream);
+      border: none;
+      padding: 12px 16px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-black);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      border-right: 1px solid var(--ns-black);
+    }
+    .firmante-btn:last-child { border-right: none; }
+    .firmante-btn.active {
+      background: var(--ns-black);
+      color: var(--ns-acid);
+    }
+    .firmante-btn:not(.active):hover {
+      background: var(--ns-cream-2);
+    }
+    .firmante-sub {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      margin-top: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Preview económico */
+    .preview-panel {
+      margin-top: 32px;
+      padding: 20px 22px;
+      border: 1px solid var(--ns-black);
+      background: var(--ns-cream);
+      position: relative;
+    }
+    .preview-panel::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--ns-acid);
+    }
+    .preview-title {
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-black);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .preview-title .code-tag {
+      color: var(--ns-taupe);
+      font-weight: 400;
+    }
+    .preview-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 0;
+      border-bottom: 1px dashed var(--ns-taupe);
+    }
+    .preview-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .preview-label {
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-black);
+    }
+    .preview-value {
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: var(--tr-black);
+      color: var(--ns-black);
+      font-variant-numeric: tabular-nums;
+    }
+    .preview-value.acid { color: var(--ns-black); }
+    .preview-value.acid::after {
+      content: '';
+      display: inline-block;
+      width: 10px; height: 3px;
+      background: var(--ns-acid);
+      margin-left: 10px;
+      vertical-align: 5px;
+    }
+    .preview-row.total .preview-value { font-size: 28px; }
+    .hint-iva {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-muted);
+      text-transform: uppercase;
+      margin-top: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Actions */
+    .actions {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .btn {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: var(--tr-code);
+      padding: 16px 22px;
+      text-transform: uppercase;
+      border: 1px solid var(--ns-black);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s, transform 0.05s;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+    }
+    .btn.primary {
+      background: var(--ns-black);
+      color: var(--ns-cream);
+      padding-left: 32px;
+    }
+    .btn.primary::before {
+      content: '';
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      width: 10px; height: 3px;
+      background: var(--ns-acid);
+    }
+    .btn.primary:hover { background: var(--ns-acid); color: var(--ns-black); }
+    .btn.primary:hover::before { background: var(--ns-black); }
+    .btn.ghost { background: transparent; color: var(--ns-black); }
+    .btn.ghost:hover { background: var(--ns-black); color: var(--ns-cream); }
+    .btn:active { transform: translateY(1px); }
+    .btn.copied { background: var(--ns-acid); color: var(--ns-black); }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--ns-black);
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      left: 32px; top: -1px;
+      width: 56px; height: 1px;
+      background: var(--ns-acid);
+    }
+    .footer-left { display: flex; align-items: center; gap: 12px; }
+    .footer-mark {
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--ns-acid);
+      line-height: 1;
+    }
+    .footer-statement {
+      font-style: italic;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 12px;
+      color: var(--ns-black);
+    }
+
+    @media (max-width: 640px) {
+      .header { padding: 16px 18px; }
+      main { padding: 24px 18px 60px; }
+      .form-card { padding: 28px 22px 26px; }
+      .form-title { font-size: 38px; }
+      .row-2 { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr; }
+      .footer { padding: 12px 18px; flex-wrap: wrap; gap: 8px; font-size: 9px; }
+      .footer::before { left: 18px; }
+      .header-meta { display: none; }
+      .preview-value { font-size: 17px; }
+      .preview-row.total .preview-value { font-size: 22px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div>
+      <a href="/" class="back-link">← VOLVER AL CALENDARIO</a>
+      <h1 class="logo">N<span class="slashed">Ø</span>NSENSE</h1>
+      <div class="subtitle">EDITOR DE CONTRATOS · 0701</div>
+    </div>
+    <div class="header-meta">
+      NS / CONTRACTS<br/>
+      REV 0001 — 2026
+    </div>
+  </header>
+
+  <main>
+    <div class="form-wrap">
+      <span class="reg-mark tl">+</span>
+      <span class="reg-mark tr">+</span>
+      <span class="reg-mark bl">+</span>
+      <span class="reg-mark br">+</span>
+
+      <div class="form-card">
+        <div class="form-title">nuevo acuerdo</div>
+        <div class="form-code">0701 — REGISTRO DE CONTRATO</div>
+
+        <div class="field-group">
+          <label for="f-cliente"><span class="code-tag">0711</span>Cliente / Razón social</label>
+          <input type="text" id="f-cliente" placeholder="Nombre del cliente" autocomplete="off">
+        </div>
+
+        <div class="field-group">
+          <label for="f-proyecto"><span class="code-tag">0712</span>Descripción del servicio / proyecto</label>
+          <textarea id="f-proyecto" placeholder="Producción audiovisual, postproducción, dirección creativa…"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="f-presupuesto"><span class="code-tag">0713</span>Presupuesto sin IVA (€)</label>
+          <input type="number" id="f-presupuesto" step="0.01" min="0" placeholder="0.00" inputmode="decimal">
+        </div>
+
+        <div class="field-group row-2">
+          <div>
+            <label for="f-fecha"><span class="code-tag">0714</span>Fecha del contrato</label>
+            <input type="date" id="f-fecha">
+          </div>
+          <div>
+            <label for="f-entrega"><span class="code-tag">0715</span>Entrega estimada</label>
+            <input type="date" id="f-entrega">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="f-ref"><span class="code-tag">0716</span>Referencia del documento</label>
+          <div class="row-ref">
+            <input type="text" id="f-ref" placeholder="NSS-XXXXXX">
+            <button type="button" class="btn-mini" onclick="regenRef()">NUEVA REF</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label><span class="code-tag">0717</span>Firmante por Nonsense</label>
+          <div class="firmante-toggle" id="firmante-toggle">
+            <button type="button" class="firmante-btn active" data-val="javier" onclick="selectFirmante('javier')">Javier</button>
+            <button type="button" class="firmante-btn" data-val="carlos" onclick="selectFirmante('carlos')">Carlos</button>
+          </div>
+          <div class="firmante-sub" id="firmante-sub">Javier Urrutia Valencia · DNI 51531855X</div>
+        </div>
+
+        <div class="preview-panel">
+          <div class="preview-title">
+            <span class="code-tag">0718</span> Cálculo automático
+          </div>
+          <div class="preview-row">
+            <span class="preview-label">Base sin IVA</span>
+            <span class="preview-value" id="prev-base">—</span>
+          </div>
+          <div class="preview-row total">
+            <span class="preview-label">Total con IVA</span>
+            <span class="preview-value acid" id="prev-total">—</span>
+          </div>
+          <div class="preview-row">
+            <span class="preview-label">Anticipo (30%)</span>
+            <span class="preview-value" id="prev-anticipo">—</span>
+          </div>
+          <div class="hint-iva" id="hint-iva">IVA (21%) calculado automáticamente.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn ghost" type="button" onclick="copyLink(event)">copiar enlace</button>
+          <button class="btn primary" type="button" onclick="openContract()">ver contrato →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-left">
+      <span class="footer-mark">Ø</span>
+      <span class="footer-statement">sense in nonsense.</span>
+    </div>
+    <div>NS / CONTRACTS · 0701 · 2026</div>
+  </footer>
+
+  <script>
+    const fmt = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+
+    const FIRMANTES = {
+      javier: { nombre: 'Javier Urrutia Valencia', dni: '51531855X' },
+      carlos: { nombre: 'Carlos Urrutia Valencia', dni: '51531853P' },
+    };
+    let firmante = 'javier';
+
+    function selectFirmante(val) {
+      firmante = val;
+      document.querySelectorAll('.firmante-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.val === val);
+      });
+      const f = FIRMANTES[val];
+      document.getElementById('firmante-sub').textContent = `${f.nombre} · DNI ${f.dni}`;
+    }
+
+    function genRef() {
+      return 'NSS-' + Math.random().toString(36).toUpperCase().slice(2, 8);
+    }
+    function regenRef() {
+      document.getElementById('f-ref').value = genRef();
+    }
+
+    function toDateES(isoStr) {
+      if (!isoStr) return '';
+      const [y, m, d] = isoStr.split('-');
+      return `${d}/${m}/${y}`;
+    }
+    function esDateToISO(str) {
+      if (!str || str === '—') return '';
+      const parts = str.split('/');
+      if (parts.length !== 3) return '';
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+
+    function buildParams() {
+      const cliente     = document.getElementById('f-cliente').value.trim();
+      const proyecto    = document.getElementById('f-proyecto').value.trim();
+      const presupuesto = parseFloat(document.getElementById('f-presupuesto').value) || 0;
+      const fechaRaw    = document.getElementById('f-fecha').value;
+      const entregaRaw  = document.getElementById('f-entrega').value;
+      const ref         = document.getElementById('f-ref').value.trim() || genRef();
+
+      return new URLSearchParams({
+        cliente:     cliente     || 'Nombre del cliente',
+        proyecto:    proyecto    || 'Descripción del proyecto',
+        presupuesto: presupuesto,
+        fecha:       toDateES(fechaRaw) || new Date().toLocaleDateString('es-ES'),
+        entrega:     toDateES(entregaRaw) || '—',
+        ref:         ref,
+        firmante:    firmante,
+      });
+    }
+
+    function getContractURL() {
+      return 'contrato.html?' + buildParams().toString();
+    }
+    function openContract() {
+      window.open(getContractURL(), '_blank');
+    }
+    function copyLink(ev) {
+      const url = window.location.origin + '/' + getContractURL();
+      const btn = ev.currentTarget;
+      const orig = btn.textContent;
+      const flash = () => {
+        btn.textContent = 'enlace copiado ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1800);
+      };
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(flash).catch(() => prompt('Copia este enlace:', url));
+      } else {
+        prompt('Copia este enlace:', url);
+      }
+    }
+
+    function updatePreview() {
+      const base     = parseFloat(document.getElementById('f-presupuesto').value) || 0;
+      const iva      = base * 0.21;
+      const total    = base + iva;
+      const anticipo = total * 0.30;
+
+      document.getElementById('prev-base').textContent     = base ? fmt(base)     : '—';
+      document.getElementById('prev-total').textContent    = base ? fmt(total)    : '—';
+      document.getElementById('prev-anticipo').textContent = base ? fmt(anticipo) : '—';
+      document.getElementById('hint-iva').textContent      = base
+        ? `IVA: ${fmt(iva)} · BASE: ${fmt(base)}`
+        : 'IVA (21%) calculado automáticamente.';
+    }
+
+    // Init
+    document.getElementById('f-fecha').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('f-ref').value   = genRef();
+    document.getElementById('f-presupuesto').addEventListener('input', updatePreview);
+
+    // Pre-fill desde URL (cuando vuelves del contrato)
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('cliente'))     document.getElementById('f-cliente').value     = p.get('cliente');
+    if (p.get('proyecto'))    document.getElementById('f-proyecto').value    = p.get('proyecto');
+    if (p.get('presupuesto')) document.getElementById('f-presupuesto').value = p.get('presupuesto');
+    if (p.get('fecha'))       document.getElementById('f-fecha').value       = esDateToISO(p.get('fecha'));
+    if (p.get('entrega'))     document.getElementById('f-entrega').value     = esDateToISO(p.get('entrega'));
+    if (p.get('ref'))         document.getElementById('f-ref').value         = p.get('ref');
+    if (p.get('firmante') && FIRMANTES[p.get('firmante')]) selectFirmante(p.get('firmante'));
+
+    updatePreview();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#EDEDE1" />
+  <title>Acuerdo de Servicios — Nonsense</title>
+
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/ciq6vij.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    :root {
+      --ns-black: #222222;
+      --ns-acid: #C9ED19;
+      --ns-cream: #EDEDE1;
+      --ns-cream-2: #e2e2d4;
+      --ns-taupe: #A99C8B;
+      --ns-muted: rgba(34, 34, 34, 0.55);
+      --tr-black: -0.05em;
+      --tr-code: 0.06em;
+      --font: 'neue-haas-grotesk-display', 'Inter', 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+    }
+
+    html { font-size: 16px; background: var(--ns-cream); }
+    body {
+      background: var(--ns-cream);
+      color: var(--ns-black);
+      font-family: var(--font);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+      padding: 50px 24px 110px;
+      min-height: 100vh;
+    }
+
+    /* ===== TOOLBAR ===== */
+    .toolbar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+      pointer-events: none;
+    }
+    .toolbar > * { pointer-events: auto; }
+    .tb-btn {
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      padding: 9px 14px;
+      background: var(--ns-black);
+      color: var(--ns-cream);
+      border: 1px solid var(--ns-black);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tb-btn:hover { background: var(--ns-acid); color: var(--ns-black); }
+    .tb-btn.outline {
+      background: transparent;
+      color: var(--ns-black);
+    }
+    .tb-btn.outline:hover { background: var(--ns-black); color: var(--ns-cream); }
+    .tb-meta {
+      font-size: 9px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      background: var(--ns-cream);
+      padding: 6px 10px;
+      border: 1px solid var(--ns-taupe);
+      line-height: 1.3;
+    }
+
+    /* ===== PAGE ===== */
+    .page {
+      max-width: 880px;
+      margin: 0 auto;
+      background: var(--ns-cream);
+      border: 1px solid var(--ns-black);
+      padding: 56px 56px 40px;
+      position: relative;
+    }
+    .page::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 80px; height: 4px;
+      background: var(--ns-acid);
+    }
+
+    /* Marcas de registro en esquinas */
+    .reg {
+      position: absolute;
+      color: var(--ns-taupe);
+      font-size: 14px;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .reg.tl { top: -14px; left: -14px; }
+    .reg.tr { top: -14px; right: -14px; }
+    .reg.bl { bottom: -14px; left: -14px; }
+    .reg.br { bottom: -14px; right: -14px; }
+
+    /* HEADER del documento */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--ns-black);
+      margin-bottom: 36px;
+    }
+    .doc-logo {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 28px;
+      letter-spacing: var(--tr-black);
+      line-height: 1;
+      color: var(--ns-black);
+    }
+    .doc-logo .slashed { color: var(--ns-acid); }
+    .doc-meta {
+      text-align: right;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.6;
+    }
+    .doc-meta strong { color: var(--ns-black); font-weight: 600; }
+
+    /* TÍTULO DOC */
+    .doc-title {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 56px;
+      letter-spacing: var(--tr-black);
+      line-height: 0.9;
+      color: var(--ns-black);
+      text-transform: lowercase;
+      margin-bottom: 8px;
+    }
+    .doc-subtitle {
+      font-size: 11px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 44px;
+    }
+
+    /* SECTION layout */
+    .section {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 32px;
+      padding: 26px 0;
+      border-bottom: 1px solid rgba(34, 34, 34, 0.2);
+    }
+    .section:last-of-type { border-bottom: none; }
+    .sec-left { position: relative; }
+    .sec-title {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 26px;
+      letter-spacing: var(--tr-black);
+      line-height: 1.0;
+      color: var(--ns-black);
+      text-transform: lowercase;
+    }
+    .sec-title .num {
+      display: block;
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-acid);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .sec-right { min-width: 0; }
+
+    /* Fields */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-taupe);
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .field-value {
+      font-family: var(--font);
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--ns-black);
+      line-height: 1.4;
+    }
+    .field-value.xl {
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: var(--tr-black);
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .edit-indicator {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--ns-acid);
+      margin-left: 6px;
+    }
+    [contenteditable="true"] {
+      outline: none;
+      border-bottom: 1px dashed var(--ns-taupe);
+      padding-bottom: 2px;
+      cursor: text;
+    }
+    [contenteditable="true"]:focus {
+      border-bottom-color: var(--ns-acid);
+      border-bottom-style: solid;
+    }
+    .edit-tip {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-muted);
+      text-transform: uppercase;
+      margin-top: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Budget table */
+    .budget-table { border: 1px solid var(--ns-black); }
+    .budget-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--ns-black);
+    }
+    .budget-row:last-child { border-bottom: none; }
+    .budget-row .br-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-black);
+    }
+    .budget-row .br-val {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: var(--tr-black);
+      color: var(--ns-black);
+      font-variant-numeric: tabular-nums;
+    }
+    .budget-row.total-row {
+      background: var(--ns-black);
+      color: var(--ns-cream);
+      position: relative;
+    }
+    .budget-row.total-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--ns-acid);
+    }
+    .budget-row.total-row .br-label { color: var(--ns-cream); }
+    .budget-row.total-row .br-val {
+      color: var(--ns-acid);
+      font-size: 24px;
+    }
+
+    /* Pay blocks */
+    .pay-block {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 20px;
+      padding: 16px 0;
+      border-bottom: 1px dashed var(--ns-taupe);
+      align-items: center;
+    }
+    .pay-block:last-of-type { border-bottom: none; }
+    .pay-percent {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 32px;
+      letter-spacing: var(--tr-black);
+      color: var(--ns-acid);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .pay-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .pay-amount {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: var(--tr-black);
+      color: var(--ns-black);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .pay-note {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-muted);
+      text-transform: uppercase;
+      margin-top: 3px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Clauses */
+    .clause {
+      font-size: 13px;
+      color: var(--ns-black);
+      margin-bottom: 12px;
+      line-height: 1.55;
+    }
+    .clause:last-child { margin-bottom: 0; }
+    .clause strong { font-weight: 600; }
+
+    .alert-box,
+    .revision-callout {
+      background: var(--ns-cream);
+      border: 1px solid var(--ns-black);
+      padding: 12px 14px;
+      margin-top: 12px;
+      position: relative;
+    }
+    .alert-box::before,
+    .revision-callout::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--ns-acid);
+    }
+    .alert-box p, .revision-callout p {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--ns-black);
+    }
+
+    /* ===== FIRMAS ===== */
+    .signatures {
+      margin-top: 50px;
+      padding-top: 32px;
+      border-top: 1px solid var(--ns-black);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+    .sig-block { display: flex; flex-direction: column; }
+    .sig-sub-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-taupe);
+      margin-bottom: 10px;
+    }
+    .sig-logo-wrap,
+    .sig-pad-wrap {
+      min-height: 110px;
+      border: 1px solid var(--ns-black);
+      background: var(--ns-cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .sig-logo-wrap img {
+      max-width: 75%;
+      max-height: 100px;
+      object-fit: contain;
+      filter: brightness(0);            /* fuerza negro puro */
+    }
+    .sig-pad-wrap canvas {
+      width: 100%;
+      height: 110px;
+      display: block;
+      cursor: crosshair;
+    }
+    .sig-placeholder {
+      position: absolute;
+      pointer-events: none;
+      font-size: 11px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+    }
+    .sig-pad-wrap.has-stroke .sig-placeholder { display: none; }
+    .sig-clear {
+      align-self: flex-start;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 9px;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-taupe);
+      background: transparent;
+      border: none;
+      padding: 6px 0;
+      cursor: pointer;
+      transition: color 0.12s;
+    }
+    .sig-clear:hover { color: var(--ns-acid); }
+    .sig-line { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--ns-black); }
+    .sig-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: var(--tr-code);
+      text-transform: uppercase;
+      color: var(--ns-taupe);
+    }
+    .sig-name {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: var(--tr-black);
+      color: var(--ns-black);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .sig-dni {
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      color: var(--ns-muted);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .sig-date {
+      font-size: 10px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* DOC footer */
+    .doc-footer {
+      margin-top: 50px;
+      padding-top: 18px;
+      border-top: 1px solid var(--ns-black);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      position: relative;
+    }
+    .doc-footer::before {
+      content: '';
+      position: absolute;
+      left: 0; top: -1px;
+      width: 56px; height: 1px;
+      background: var(--ns-acid);
+    }
+
+    /* ===== BOTTOM BAR ===== */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--ns-black);
+      color: var(--ns-cream);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      z-index: 60;
+      border-top: 3px solid var(--ns-acid);
+    }
+    .bottom-bar-hint {
+      font-size: 11px;
+      letter-spacing: var(--tr-code);
+      color: var(--ns-taupe);
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+    }
+    .bottom-pdf-btn {
+      font-family: var(--font);
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: var(--tr-code);
+      padding: 12px 22px;
+      background: var(--ns-acid);
+      color: var(--ns-black);
+      border: 1px solid var(--ns-acid);
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s, transform 0.05s;
+      position: relative;
+    }
+    .bottom-pdf-btn:hover {
+      background: var(--ns-cream);
+      color: var(--ns-black);
+    }
+    .bottom-pdf-btn:active { transform: translateY(1px); }
+    .bottom-pdf-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Print + PDF-friendly */
+    @media print {
+      .toolbar, .bottom-bar, .no-print, .sig-placeholder, .edit-tip, .edit-indicator { display: none !important; }
+      body { padding: 0; background: white; }
+      .page { border: none; padding: 24px; max-width: none; }
+      .page::before { display: none; }
+      .reg { display: none; }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 50px 12px 110px; }
+      .page { padding: 36px 22px 28px; }
+      .section { grid-template-columns: 1fr; gap: 14px; padding: 22px 0; }
+      .sec-title { font-size: 22px; }
+      .doc-title { font-size: 38px; }
+      .signatures { grid-template-columns: 1fr; gap: 28px; }
+      .pay-block { grid-template-columns: 60px 1fr; gap: 14px; }
+      .pay-percent { font-size: 26px; }
+      .bottom-bar { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px 16px; }
+      .bottom-pdf-btn { width: 100%; }
+      .bottom-bar-hint { text-align: center; font-size: 10px; }
+      .tb-meta { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="toolbar no-print">
+  <a class="tb-btn outline" href="/contratos" id="edit-btn">← Editar</a>
+  <div class="tb-meta">
+    NS / CONTRACTS · 0702<br/>
+    REV 0001 — 2026
+  </div>
+</div>
+
+<div class="page" id="page">
+
+  <span class="reg tl">+</span>
+  <span class="reg tr">+</span>
+  <span class="reg bl">+</span>
+  <span class="reg br">+</span>
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div>
+      <div class="doc-logo">N<span class="slashed">Ø</span>NSENSE</div>
+    </div>
+    <div class="doc-meta">
+      REF <strong id="hd-ref">—</strong><br/>
+      FECHA <strong id="hd-fecha">—</strong>
+    </div>
+  </header>
+
+  <h1 class="doc-title">acuerdo de servicios</h1>
+  <div class="doc-subtitle">0702 — DOCUMENTO VINCULANTE</div>
+
+  <!-- (1) CLIENTE -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(01)</span>cliente</div></div>
+    <div class="sec-right">
+      <div class="field">
+        <div class="field-label">Razón social / Nombre <span class="edit-indicator no-print">✎</span></div>
+        <div class="field-value xl" id="val-cliente" contenteditable="true" spellcheck="false">—</div>
+      </div>
+      <div class="field">
+        <div class="field-label">NIF / CIF <span class="edit-indicator no-print">✎</span></div>
+        <div class="field-value" id="val-nif" contenteditable="true" spellcheck="false">—</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Domicilio fiscal <span class="edit-indicator no-print">✎</span></div>
+        <div class="field-value" id="val-domicilio" contenteditable="true" spellcheck="false">—</div>
+      </div>
+      <p class="edit-tip no-print">✎ Haz clic en cualquier campo para editarlo antes de generar el PDF</p>
+    </div>
+  </div>
+
+  <!-- (2) PROYECTO -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(02)</span>proyecto</div></div>
+    <div class="sec-right">
+      <div class="field">
+        <div class="field-label">Descripción del servicio</div>
+        <div class="field-value" id="val-proyecto">—</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Fecha de entrega estimada</div>
+        <div class="field-value" id="val-entrega">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (3) PRESUPUESTO -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(03)</span>presu&shy;puesto</div></div>
+    <div class="sec-right">
+      <div class="budget-table">
+        <div class="budget-row">
+          <span class="br-label">Base imponible (sin IVA)</span>
+          <span class="br-val" id="bp-base">—</span>
+        </div>
+        <div class="budget-row">
+          <span class="br-label">IVA (21%)</span>
+          <span class="br-val" id="bp-iva">—</span>
+        </div>
+        <div class="budget-row total-row">
+          <span class="br-label">Total (IVA incluido)</span>
+          <span class="br-val" id="bp-total">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (4) CONDICIONES DE PAGO -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(04)</span>condi&shy;ciones de pago</div></div>
+    <div class="sec-right">
+      <div class="pay-block">
+        <div class="pay-percent">30%</div>
+        <div class="pay-info">
+          <div class="pay-tag">Anticipo — Reserva de fecha</div>
+          <div class="pay-amount" id="pay-anticipo">—</div>
+          <div class="pay-note">Inicio de preproducción</div>
+        </div>
+      </div>
+      <div class="pay-block">
+        <div class="pay-percent">70%</div>
+        <div class="pay-info">
+          <div class="pay-tag">Resto — Tras la prestación del servicio</div>
+          <div class="pay-amount" id="pay-resto">—</div>
+          <div class="pay-note">Vencimiento: 30 días fecha factura</div>
+        </div>
+      </div>
+      <div class="alert-box">
+        <p><strong>Importante:</strong> La fecha no se considerará reservada hasta la recepción efectiva del anticipo. El 70% restante será abonado con vencimiento a <strong>30 días desde la fecha de factura</strong>. Cualquier retraso en dicho abono devengará un interés de demora del <strong>1% mensual</strong> sobre la cantidad adeudada.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- (5) REVISIONES -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(05)</span>revisiones</div></div>
+    <div class="sec-right">
+      <p class="clause">El presente acuerdo contempla <strong>dos rondas de cambios gratuitas</strong> incluidas en el presupuesto acordado. Se entiende por «ronda de cambios» el conjunto consolidado de modificaciones enviadas en una única comunicación. Los cambios deberán centralizarse para garantizar una gestión eficiente del proyecto.</p>
+      <div class="revision-callout">
+        <p>Los cambios solicitados a partir de la tercera ronda serán presupuestados de forma independiente y requerirán aprobación previa por escrito.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- (6) PROPIEDAD INTELECTUAL -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(06)</span>propiedad intelectual</div></div>
+    <div class="sec-right">
+      <p class="clause">Los derechos de propiedad intelectual y de explotación sobre los materiales entregados se transferirán al cliente una vez recibido el <strong>pago íntegro</strong> del presupuesto acordado. Hasta dicho momento, todos los derechos permanecen en propiedad de Nonsense.</p>
+      <p class="clause"><strong>Nonsense</strong> se reserva el derecho de utilizar el trabajo realizado con fines de promoción, portfolio y muestra de servicios, una vez que el proyecto haya sido publicado o lanzado oficialmente por el cliente, salvo indicación expresa en contrario por parte del cliente, comunicada por escrito antes de la firma del presente acuerdo.</p>
+      <p class="clause">El presupuesto acordado cubre exclusivamente el <strong>producto final exportado y entregado</strong>. Los archivos fuente, proyectos de edición, ficheros RAW, tomas descartadas y cualquier otro material de trabajo intermedio son y permanecen propiedad de Nonsense. Su entrega, si el cliente la solicitase, tendrá un coste adicional que se presupuestará por separado.</p>
+    </div>
+  </div>
+
+  <!-- (7) MATERIALES -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(07)</span>materiales del cliente</div></div>
+    <div class="sec-right">
+      <p class="clause">El cliente se compromete a facilitar, en tiempo y forma, todos los materiales, archivos, información y aprobaciones necesarios para el desarrollo del proyecto. Los retrasos en la entrega de dichos materiales podrán derivar en una <strong>revisión justificada de la fecha de entrega estimada</strong>, sin que ello constituya incumplimiento por parte de Nonsense.</p>
+      <p class="clause">El cliente declara que los materiales aportados están libres de cargas, licencias restrictivas o derechos de terceros que pudieran impedir su uso. El cliente asume plena responsabilidad por cualquier reclamación derivada de la utilización de dichos materiales.</p>
+    </div>
+  </div>
+
+  <!-- (8) CANCELACIÓN -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(08)</span>cance&shy;lación</div></div>
+    <div class="sec-right">
+      <p class="clause">En caso de cancelación o desistimiento por parte del cliente, <strong>el anticipo abonado no será reembolsable</strong>, constituyendo compensación por la reserva de agenda, los trabajos de preproducción iniciados y los recursos comprometidos.</p>
+      <p class="clause">Si la cancelación se produce cuando el grado de avance del proyecto supere el <strong>50%</strong>, Nonsense podrá facturar adicionalmente hasta el equivalente al 50% del presupuesto acordado, proporcional al trabajo ya ejecutado y documentado.</p>
+      <div class="alert-box">
+        <p>Nonsense podrá resolver el presente acuerdo por incumplimiento grave del cliente o por causas de fuerza mayor, reintegrando las cantidades proporcionales al trabajo no ejecutado una vez descontado el anticipo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- (9) RESPONSABILIDAD -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(09)</span>respon&shy;sabilidad</div></div>
+    <div class="sec-right">
+      <p class="clause">La responsabilidad máxima de Nonsense derivada del presente acuerdo no excederá, en ningún caso, el <strong>importe total del presupuesto</strong> pactado. Nonsense no será responsable de daños indirectos, pérdidas de negocio, lucro cesante ni perjuicios derivados de retrasos ajenos a su control o atribuibles al cliente.</p>
+      <p class="clause">Nonsense no asume responsabilidad alguna frente a reclamaciones de terceros relacionadas con los contenidos, productos o servicios del cliente para los que se ha realizado el trabajo encomendado.</p>
+    </div>
+  </div>
+
+  <!-- (10) FUERZA MAYOR -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(10)</span>fuerza mayor</div></div>
+    <div class="sec-right">
+      <p class="clause">Ninguna de las partes incurrirá en responsabilidad por el retraso o incumplimiento de sus obligaciones cuando dichas circunstancias sean consecuencia de hechos imprevisibles o inevitables que escapen razonablemente a su control: catástrofes naturales, conflictos bélicos, pandemias, fallos de suministro generalizado, actos de autoridad u otras causas de fuerza mayor reconocidas en derecho.</p>
+      <p class="clause">La parte afectada deberá <strong>notificar por escrito</strong> a la otra en el menor plazo posible, indicando la causa y la duración estimada. Ambas partes se comprometen a retomar las obligaciones contractuales en cuanto las circunstancias lo permitan.</p>
+    </div>
+  </div>
+
+  <!-- (11) DATOS PERSONALES -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(11)</span>datos personales</div></div>
+    <div class="sec-right">
+      <p class="clause">Ambas partes se comprometen a tratar los datos personales intercambiados en el marco del presente acuerdo de conformidad con el <strong>Reglamento (UE) 2016/679 (RGPD)</strong> y la normativa española de protección de datos vigente. Los datos facilitados se utilizarán exclusivamente para la gestión, facturación y ejecución del presente contrato. El cliente podrá ejercer sus derechos de acceso, rectificación, cancelación y oposición por escrito a través de los canales de comunicación habituales utilizados para la gestión del proyecto.</p>
+      <p class="clause">Ninguna de las partes cederá, venderá ni compartirá datos personales de la otra con terceros sin consentimiento expreso, salvo obligación legal. Ambas partes adoptarán las medidas técnicas y organizativas razonables para garantizar su seguridad.</p>
+    </div>
+  </div>
+
+  <!-- (12) ACUERDO -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(12)</span>acuerdo</div></div>
+    <div class="sec-right">
+      <p class="clause">Ambas partes manifiestan su conformidad con las condiciones económicas y de producción descritas en el presente documento, que tiene carácter vinculante desde el momento de la aceptación y el abono del anticipo correspondiente.</p>
+      <p class="clause">Este documento ha sido emitido por <strong>Nonsense</strong> y sustituye a cualquier comunicación previa de carácter económico o contractual relativa al mismo proyecto.</p>
+      <p class="clause">Nonsense se reserva el derecho de <strong>subcontratar a especialistas externos</strong> (técnicos de sonido, coloristas, locutores, ilustradores u otros profesionales) cuando la naturaleza o envergadura del proyecto así lo requiera. En todo caso, Nonsense mantendrá la dirección creativa y la supervisión del trabajo, siendo el único responsable de la calidad y la entrega final ante el cliente.</p>
+    </div>
+  </div>
+
+  <!-- (13) LEY APLICABLE -->
+  <div class="section">
+    <div class="sec-left"><div class="sec-title"><span class="num">(13)</span>ley aplicable</div></div>
+    <div class="sec-right">
+      <p class="clause">El presente acuerdo se rige íntegramente por la <strong>legislación española</strong>. Para la resolución de cualquier controversia derivada de su interpretación, cumplimiento o resolución, ambas partes se someten expresamente a los <strong>Juzgados y Tribunales de la ciudad de Madrid</strong>, con renuncia a cualquier otro fuero que pudiera corresponderles.</p>
+    </div>
+  </div>
+
+  <!-- FIRMAS -->
+  <div class="signatures">
+
+    <div class="sig-block">
+      <div class="sig-sub-label">Firma Nonsense</div>
+      <div class="sig-logo-wrap">
+        <img id="sig-img-nonsense" src="" alt="Firma">
+      </div>
+      <div class="sig-line">
+        <div class="sig-label" id="sig-label-nonsense">Por Nonsense</div>
+        <div class="sig-name" id="sig-name-nonsense">Nonsense</div>
+        <div class="sig-dni" id="sig-dni-nonsense">—</div>
+        <div class="sig-date" id="sig-fecha-nonsense">—</div>
+      </div>
+    </div>
+
+    <div class="sig-block">
+      <div class="sig-sub-label">Firma del cliente</div>
+      <div class="sig-pad-wrap" id="sig-pad-wrap">
+        <canvas id="sig-canvas"></canvas>
+        <div class="sig-placeholder" id="sig-placeholder">FIRME AQUÍ →</div>
+      </div>
+      <button class="sig-clear no-print" onclick="clearSignature()">↻ Limpiar firma</button>
+      <div class="sig-line">
+        <div class="sig-label">Por el cliente</div>
+        <div class="sig-name" id="sig-cliente">—</div>
+        <div class="sig-date" id="sig-fecha-cliente">—</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DOC FOOTER -->
+  <div class="doc-footer">
+    <span>Ø NONSENSE</span>
+    <span>REF <span id="footer-ref">—</span></span>
+    <span>GENERADO EL <span id="footer-fecha">—</span></span>
+  </div>
+
+</div>
+
+<div class="bottom-bar no-print" id="bottom-bar">
+  <span class="bottom-bar-hint">FIRMA EL DOCUMENTO ANTES DE DESCARGAR TU COPIA</span>
+  <button class="bottom-pdf-btn" id="pdf-btn" onclick="downloadPDF()">DESCARGAR PDF FIRMADO</button>
+</div>
+
+<script>
+  /* ── DATA ── */
+  const p = new URLSearchParams(window.location.search);
+
+  const FIRMANTES = {
+    javier: { nombre: 'Javier Urrutia Valencia', dni: '51531855X', imgSrc: '/firmas/javier.png' },
+    carlos: { nombre: 'Carlos Urrutia Valencia', dni: '51531853P', imgSrc: '/firmas/carlos.png' },
+  };
+  const firmante = FIRMANTES[p.get('firmante')] || FIRMANTES.javier;
+
+  const fmt = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+
+  const data = {
+    cliente:     p.get('cliente')    || '—',
+    proyecto:    p.get('proyecto')   || 'Descripción del proyecto',
+    presupuesto: parseFloat(p.get('presupuesto')) || 0,
+    fecha:       p.get('fecha')      || new Date().toLocaleDateString('es-ES'),
+    entrega:     p.get('entrega')    || '—',
+    ref:         p.get('ref')        || 'NSS-NUEVO',
+  };
+
+  const base     = data.presupuesto;
+  const iva      = base * 0.21;
+  const total    = base + iva;
+  const anticipo = total * 0.30;
+  const resto    = total - anticipo;
+
+  /* ── RENDER ── */
+  document.getElementById('val-cliente').textContent   = data.cliente.toUpperCase();
+  document.getElementById('val-nif').textContent       = '—';
+  document.getElementById('val-domicilio').textContent = '—';
+  document.getElementById('val-proyecto').textContent  = data.proyecto;
+  document.getElementById('val-entrega').textContent   = data.entrega;
+
+  document.getElementById('bp-base').textContent   = fmt(base);
+  document.getElementById('bp-iva').textContent    = fmt(iva);
+  document.getElementById('bp-total').textContent  = fmt(total);
+  document.getElementById('pay-anticipo').textContent = fmt(anticipo);
+  document.getElementById('pay-resto').textContent    = fmt(resto);
+
+  document.getElementById('hd-ref').textContent       = data.ref;
+  document.getElementById('hd-fecha').textContent     = data.fecha;
+  document.getElementById('footer-ref').textContent   = data.ref;
+  document.getElementById('footer-fecha').textContent = data.fecha;
+
+  document.getElementById('sig-cliente').textContent        = data.cliente.toUpperCase();
+  document.getElementById('sig-fecha-cliente').textContent  = data.fecha;
+
+  document.getElementById('sig-label-nonsense').textContent = `Por ${firmante.nombre}`;
+  document.getElementById('sig-name-nonsense').textContent  = firmante.nombre.toUpperCase();
+  document.getElementById('sig-dni-nonsense').textContent   = `DNI ${firmante.dni}`;
+  document.getElementById('sig-fecha-nonsense').textContent = data.fecha;
+  document.getElementById('sig-img-nonsense').src           = firmante.imgSrc;
+
+  /* ── CLIENT NAME LIVE SYNC ── */
+  document.getElementById('val-cliente').addEventListener('input', function() {
+    document.getElementById('sig-cliente').textContent = this.textContent.toUpperCase();
+  });
+
+  /* ── SIGNATURE PAD ── */
+  const canvas = document.getElementById('sig-canvas');
+  const ctx    = canvas.getContext('2d');
+  const padWrap = document.getElementById('sig-pad-wrap');
+
+  function resizeCanvas() {
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = r.width * dpr;
+    canvas.height = r.height * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.lineWidth   = 2;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+    ctx.strokeStyle = '#222222';
+  }
+  function clearSignature() {
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, r.width * dpr, r.height * dpr);
+    padWrap.classList.remove('has-stroke');
+  }
+  setTimeout(resizeCanvas, 50);
+  window.addEventListener('resize', () => { resizeCanvas(); clearSignature(); });
+
+  let drawing = false, lastX = 0, lastY = 0;
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    const pt = e.touches ? e.touches[0] : e;
+    return { x: pt.clientX - r.left, y: pt.clientY - r.top };
+  }
+  function start(e) {
+    e.preventDefault();
+    drawing = true;
+    const p = pos(e);
+    lastX = p.x; lastY = p.y;
+    padWrap.classList.add('has-stroke');
+  }
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = pos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    lastX = p.x; lastY = p.y;
+  }
+  function end() { drawing = false; }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move,   { passive: false });
+  canvas.addEventListener('touchend', end);
+
+  /* ── PDF DOWNLOAD ── */
+  async function downloadPDF() {
+    const btn = document.getElementById('pdf-btn');
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'GENERANDO PDF…';
+
+    try {
+      // Reemplazar canvas vivo por imagen estática durante la captura
+      const page  = document.getElementById('page');
+      const clone = page.cloneNode(true);
+
+      // Quitar elementos solo-pantalla del clon
+      clone.querySelectorAll('.no-print').forEach(el => el.remove());
+
+      // Sustituir canvas por img con el contenido firmado
+      const cloneCanvas = clone.querySelector('#sig-canvas');
+      if (cloneCanvas) {
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL('image/png');
+        img.style.width = '100%';
+        img.style.height = '110px';
+        img.style.objectFit = 'contain';
+        cloneCanvas.parentNode.replaceChild(img, cloneCanvas);
+      }
+
+      // Stage el clon offscreen
+      clone.style.position = 'absolute';
+      clone.style.left = '-10000px';
+      clone.style.top = '0';
+      clone.style.width = '880px';
+      document.body.appendChild(clone);
+
+      // Esperar a que la imagen de firma cargue si estaba pendiente
+      const sigImg = clone.querySelector('#sig-img-nonsense');
+      if (sigImg && !sigImg.complete) {
+        await new Promise(res => { sigImg.onload = sigImg.onerror = res; });
+      }
+
+      const captured = await html2canvas(clone, {
+        scale: 2,
+        backgroundColor: '#EDEDE1',
+        useCORS: true,
+      });
+
+      document.body.removeChild(clone);
+
+      const { jsPDF } = window.jspdf;
+      const PDF_W = 210;                                  // A4 mm
+      const ratio = captured.width / captured.height;
+      const PDF_H = PDF_W / ratio;
+
+      const pdf = new jsPDF({ unit: 'mm', format: [PDF_W, PDF_H] });
+      pdf.addImage(captured.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, PDF_W, PDF_H);
+
+      const nombreVivo = document.getElementById('val-cliente').textContent || data.cliente;
+      const slug = nombreVivo.toUpperCase()
+        .replace(/[^\w\s-]/g, '')
+        .trim().replace(/\s+/g, '-')
+        .slice(0, 40);
+
+      pdf.save(`Nonsense_${slug || 'Cliente'}_${data.ref}.pdf`);
+    } catch (err) {
+      console.error(err);
+      alert('Error generando PDF: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  }
+</script>
+
+</body>
+</html>

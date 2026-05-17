@@ -969,6 +969,19 @@ span.dot.cat-dead::after {
   width: 1px; height: 10px;
   background: var(--ns-taupe);
 }
+.footer-link {
+  color: var(--ns-black);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: var(--tr-code);
+  transition: color 0.12s;
+  position: relative;
+  padding: 0 2px;
+}
+.footer-link:hover {
+  color: var(--ns-black);
+  background: var(--ns-acid);
+}
 
 /* ---------- Calendar grid wrap + registration marks ---------- */
 .grid-wrap {

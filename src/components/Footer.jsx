@@ -9,11 +9,11 @@ export default function Footer() {
         <span className="footer-statement">sense in nonsense.</span>
       </div>
       <div className="footer-right">
-        <span>NS / CAL</span>
+        <a href="/contratos" className="footer-link" title="Editor de contratos">CONTRATOS</a>
         <span className="footer-bar" />
-        <span>0001</span>
+        <a href="/llave" className="footer-link" title="Llave 3D">LLAVE</a>
         <span className="footer-bar" />
-        <span>{year}</span>
+        <span>NS / CAL · 0001 · {year}</span>
       </div>
     </footer>
   )
