@@ -34,9 +34,11 @@
   --cat-dead-bg: var(--ns-black);
   --cat-dead-fg: var(--ns-acid);
 
-  /* Tipografía */
-  --font-display: 'Inter', 'Helvetica Neue', 'Arial', system-ui, sans-serif;
-  --font-body:    'Inter', 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+  /* Tipografía — Neue Haas Grotesk vía Adobe Fonts (kit ciq6vij).
+     Display cubre 400/600/900 que es lo que usamos. Text disponible
+     como respaldo. Inter como fallback final si Adobe Fonts no carga. */
+  --font-display: 'neue-haas-grotesk-display', 'neue-haas-grotesk-text', 'Inter', 'Helvetica Neue', 'Arial', system-ui, sans-serif;
+  --font-body:    'neue-haas-grotesk-display', 'neue-haas-grotesk-text', 'Inter', 'Helvetica Neue', 'Arial', system-ui, sans-serif;
 
   /* Trackings (manual: Black -50/1000 = -0.05em, Light 0) */
   --tr-black: -0.05em;
@@ -53,7 +55,7 @@ body {
   font-family: var(--font-body);
   background: var(--ns-cream);
   color: var(--ns-black);
-  font-weight: 300;                          /* Inter Light */
+  font-weight: 400;                          /* Roman — sustituirá por Light 45 cuando esté en el kit */
   font-feature-settings: 'ss01', 'tnum';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -74,7 +76,7 @@ input, select, textarea { font: inherit; }
   line-height: 0.95;
 }
 .code {
-  font-weight: 300;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--tr-code);
   text-transform: uppercase;
@@ -102,7 +104,7 @@ input, select, textarea { font: inherit; }
 .logo .slashed { color: var(--ns-acid); }    /* la Ø en acid acento */
 .subtitle {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-taupe);
@@ -137,7 +139,7 @@ input, select, textarea { font: inherit; }
 }
 .header-meta {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-taupe);
@@ -178,7 +180,7 @@ input, select, textarea { font: inherit; }
   line-height: 0.9;
 }
 .month-title .year {
-  font-weight: 300;
+  font-weight: 400;
   font-size: 18px;
   letter-spacing: var(--tr-code);
   color: var(--ns-taupe);
@@ -187,7 +189,7 @@ input, select, textarea { font: inherit; }
 }
 .btn-today {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   text-transform: uppercase;
@@ -206,7 +208,7 @@ input, select, textarea { font: inherit; }
 }
 .weekday {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-muted);
@@ -243,7 +245,7 @@ input, select, textarea { font: inherit; }
 
 .day-number {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 13px;
   letter-spacing: 0;
   color: var(--ns-black);
@@ -276,7 +278,7 @@ input, select, textarea { font: inherit; }
 /* ---------- Event pills ---------- */
 .event-pill {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 11px;
   letter-spacing: 0;
   padding: 3px 7px;
@@ -336,7 +338,7 @@ span.dot.cat-dead::after {
 
 .more {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 9px;
   color: var(--ns-muted);
   padding: 2px 6px;
@@ -355,7 +357,7 @@ span.dot.cat-dead::after {
 }
 .panel-title {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-black);
@@ -368,7 +370,7 @@ span.dot.cat-dead::after {
 }
 .panel-title .code-tag {
   color: var(--ns-taupe);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .stat-row {
@@ -381,7 +383,7 @@ span.dot.cat-dead::after {
 .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
 .stat-label {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-black);
@@ -403,7 +405,7 @@ span.dot.cat-dead::after {
   align-items: center;
   gap: 12px;
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 11px;
   letter-spacing: var(--tr-code);
   color: var(--ns-black);
@@ -411,7 +413,7 @@ span.dot.cat-dead::after {
 }
 .legend-item .code-tag {
   color: var(--ns-taupe);
-  font-weight: 300;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
   margin-right: 2px;
 }
@@ -433,7 +435,7 @@ span.dot.cat-dead::after {
 .upcoming-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
 .upcoming-date {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-taupe);
@@ -442,7 +444,7 @@ span.dot.cat-dead::after {
 }
 .upcoming-name {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ns-black);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -450,7 +452,7 @@ span.dot.cat-dead::after {
 }
 .empty {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 11px;
   letter-spacing: var(--tr-code);
   color: var(--ns-muted);
@@ -489,7 +491,7 @@ span.dot.cat-dead::after {
 
 .btn-ghost {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   padding: 8px 14px;
@@ -503,7 +505,7 @@ span.dot.cat-dead::after {
 
 .btn-danger {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   padding: 8px 14px;
@@ -566,7 +568,7 @@ span.dot.cat-dead::after {
 }
 .modal-title .code-tag {
   display: block;
-  font-weight: 300;
+  font-weight: 400;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   text-transform: uppercase;
@@ -578,7 +580,7 @@ span.dot.cat-dead::after {
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .label {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-black);
@@ -591,7 +593,7 @@ span.dot.cat-dead::after {
   padding: 10px 12px;
   color: var(--ns-black);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   width: 100%;
   outline: none;
   transition: border-color 0.12s, box-shadow 0.12s;
@@ -609,7 +611,7 @@ span.dot.cat-dead::after {
 .spacer { flex: 1; }
 .helper-text {
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 10px;
   letter-spacing: var(--tr-code);
   color: var(--ns-muted);
@@ -626,7 +628,7 @@ span.dot.cat-dead::after {
   color: var(--ns-acid);
   padding: 12px 18px;
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 11px;
   letter-spacing: var(--tr-code);
   border: 1px solid var(--ns-black);
@@ -661,7 +663,7 @@ span.dot.cat-dead::after {
   align-items: center;
   gap: 12px;
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 11px;
   letter-spacing: var(--tr-code);
   line-height: 1.4;
