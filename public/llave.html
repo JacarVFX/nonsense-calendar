@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <title>Nonsense — Llave Ø · WIP 0001</title>
+
+  <!-- =========================================================================
+       NONSENSE — KEY 3D TEST
+       Standalone page. Three.js via importmap (CDN).
+       Brand overlay: corner registration marks + meta labels.
+       Drag para rotar manualmente. Auto-rotación cinematográfica.
+       ======================================================================== -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a1a; }
+    body {
+      font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+      color: #A99C8B;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #scene {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;          /* permite a OrbitControls gestionar touch */
+      cursor: grab;
+    }
+    #scene:active { cursor: grabbing; }
+
+    /* ---------- Overlay brand (no interactivo) ---------- */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      padding: 24px;
+      z-index: 10;
+    }
+    .reg {
+      position: absolute;
+      color: #C9ED19;
+      opacity: 0.55;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 400;
+    }
+    .reg.tl { top: 18px; left: 18px; }
+    .reg.tr { top: 18px; right: 18px; }
+    .reg.bl { bottom: 18px; left: 18px; }
+    .reg.br { bottom: 18px; right: 18px; }
+
+    .meta {
+      position: absolute;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #A99C8B;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.5;
+    }
+    .meta.top-left  { top: 28px;  left: 44px; }
+    .meta.top-right { top: 28px;  right: 44px; text-align: right; }
+    .meta.bot-left  { bottom: 28px; left: 44px; }
+    .meta.bot-right { bottom: 28px; right: 44px; text-align: right; }
+    .meta strong { color: #C9ED19; font-weight: 400; }
+
+    .dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #C9ED19;
+      margin-right: 6px;
+      vertical-align: 1px;
+      box-shadow: 0 0 0 0 rgba(201, 237, 25, 0.5);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(201, 237, 25, 0.45); }
+      50%      { box-shadow: 0 0 0 6px rgba(201, 237, 25, 0); }
+    }
+
+    /* Pista de interacción centrada abajo */
+    .hint {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(168, 156, 139, 0.6);
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 640px) {
+      .meta { font-size: 9px; }
+      .meta.top-left, .meta.top-right { top: 22px; }
+      .meta.bot-left, .meta.bot-right { bottom: 22px; }
+      .meta.top-left, .meta.bot-left { left: 32px; }
+      .meta.top-right, .meta.bot-right { right: 32px; }
+      .hint { bottom: 42px; }
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three":           "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/":   "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <canvas id="scene"></canvas>
+
+  <div id="overlay">
+    <span class="reg tl">+</span>
+    <span class="reg tr">+</span>
+    <span class="reg bl">+</span>
+    <span class="reg br">+</span>
+
+    <div class="meta top-left">
+      NS / KEY<br />
+      <strong>0601</strong> — TEST RIG
+    </div>
+    <div class="meta top-right">
+      Ø · LLAVE PROTOTIPO<br />
+      REV 0001 — 2026
+    </div>
+    <div class="meta bot-left">
+      <span class="dot"></span>RENDER · WEBGL · ACTIVE
+    </div>
+    <div class="meta bot-right">
+      sense in nonsense.
+    </div>
+
+    <div class="hint">[ DRAG / TOUCH PARA ROTAR ]</div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three'
+    import { OrbitControls }    from 'three/addons/controls/OrbitControls.js'
+    import { RoomEnvironment }  from 'three/addons/environments/RoomEnvironment.js'
+
+    // =====================================================================
+    // 1. RENDERER
+    // =====================================================================
+    const canvas   = document.getElementById('scene')
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      powerPreference: 'high-performance',
+    })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type    = THREE.PCFSoftShadowMap
+    renderer.toneMapping       = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.05
+    renderer.outputColorSpace  = THREE.SRGBColorSpace
+
+    // =====================================================================
+    // 2. SCENE
+    // =====================================================================
+    const scene = new THREE.Scene()
+    scene.background = new THREE.Color(0x1a1a1a)
+    scene.fog        = new THREE.Fog(0x1a1a1a, 14, 26)
+
+    // Environment map procedural (RoomEnvironment) → metales con reflejos
+    const pmrem = new THREE.PMREMGenerator(renderer)
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+
+    // =====================================================================
+    // 3. CAMERA
+    // =====================================================================
+    const camera = new THREE.PerspectiveCamera(
+      32,                                            // FOV cinematográfico
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    )
+    camera.position.set(0, 1.4, 12)
+    camera.lookAt(0, 0, 0)
+
+    // =====================================================================
+    // 4. LIGHTS — 2 direccionales + ambiental
+    // =====================================================================
+    // Key light (cálida, arriba-derecha-frontal)
+    const keyLight = new THREE.DirectionalLight(0xfff2dd, 2.2)
+    keyLight.position.set(5, 8, 6)
+    keyLight.castShadow = true
+    keyLight.shadow.mapSize.set(2048, 2048)
+    keyLight.shadow.bias = -0.0005
+    keyLight.shadow.normalBias = 0.02
+    keyLight.shadow.camera.left   = -6
+    keyLight.shadow.camera.right  =  6
+    keyLight.shadow.camera.top    =  6
+    keyLight.shadow.camera.bottom = -6
+    keyLight.shadow.camera.near   = 0.5
+    keyLight.shadow.camera.far    = 24
+    scene.add(keyLight)
+
+    // Fill light (fría, arriba-izq-trasera) — modela el lado en sombra
+    const fillLight = new THREE.DirectionalLight(0x8aa9c8, 0.55)
+    fillLight.position.set(-6, 5, -4)
+    scene.add(fillLight)
+
+    // Ambiente bajo — evita negros absolutos sin matar contraste
+    const ambient = new THREE.AmbientLight(0xffffff, 0.18)
+    scene.add(ambient)
+
+    // Rim/edge light desde detrás-abajo, tono frío — separa la silueta del fondo
+    const rim = new THREE.PointLight(0xc9ed19, 0.6, 18, 2.0)
+    rim.position.set(0, -2.5, -5)
+    scene.add(rim)
+
+    // =====================================================================
+    // 5. MATERIAL — acero industrial brutalista
+    // =====================================================================
+    const steelMat = new THREE.MeshStandardMaterial({
+      color: 0x8a8a8a,
+      metalness: 0.85,
+      roughness: 0.42,
+      envMapIntensity: 0.9,
+    })
+
+    // Variante con más desgaste (para zonas funcionales: dientes, base)
+    const wornSteelMat = new THREE.MeshStandardMaterial({
+      color: 0x7e7c79,
+      metalness: 0.78,
+      roughness: 0.6,
+      envMapIntensity: 0.7,
+    })
+
+    // =====================================================================
+    // 6. KEY GEOMETRY — Group con todas las piezas
+    // =====================================================================
+    const key = new THREE.Group()
+    scene.add(key)
+
+    // --- 6.1 Ojo superior: Ø (toro + barra diagonal) ---
+    const ringRadius     = 1.3
+    const ringTube       = 0.20
+    const ringY          = 2.95
+
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(ringRadius, ringTube, 28, 96),
+      steelMat
+    )
+    ring.position.y   = ringY
+    ring.castShadow   = true
+    ring.receiveShadow= true
+    key.add(ring)
+
+    // Barra diagonal del Ø — atraviesa el toro, sobresaliendo ligeramente
+    const slashLength = ringRadius * 2 + ringTube * 1.4
+    const slash = new THREE.Mesh(
+      new THREE.CylinderGeometry(ringTube * 0.85, ringTube * 0.85, slashLength, 24, 1, false),
+      steelMat
+    )
+    slash.position.y = ringY
+    slash.rotation.z = Math.PI * 0.28      // ≈ 50° — coincide con Ø tipográfico
+    slash.castShadow = true
+    slash.receiveShadow = true
+    key.add(slash)
+
+    // --- 6.2 Cuello entre ojo y tallo (perlas decorativas forjadas) ---
+    // Bola achatada
+    const collarBead = new THREE.Mesh(
+      new THREE.SphereGeometry(0.34, 32, 18),
+      steelMat
+    )
+    collarBead.position.y = 1.45
+    collarBead.scale.y    = 0.55
+    collarBead.castShadow = true
+    collarBead.receiveShadow = true
+    key.add(collarBead)
+
+    // Anillo decorativo encima del cuello
+    const collarRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.28, 0.055, 16, 32),
+      steelMat
+    )
+    collarRing.rotation.x = Math.PI / 2
+    collarRing.position.y = 1.66
+    collarRing.castShadow = true
+    key.add(collarRing)
+
+    // --- 6.3 Tallo (cilindro principal) ---
+    const shaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.18, 2.6, 32, 1, false),
+      steelMat
+    )
+    shaft.position.y = 0.05
+    shaft.castShadow = true
+    shaft.receiveShadow = true
+    key.add(shaft)
+
+    // --- 6.4 Cuello inferior (otra perla + anillo) ---
+    const lowerBead = new THREE.Mesh(
+      new THREE.SphereGeometry(0.32, 32, 18),
+      steelMat
+    )
+    lowerBead.position.y = -1.32
+    lowerBead.scale.y    = 0.55
+    lowerBead.castShadow = true
+    lowerBead.receiveShadow = true
+    key.add(lowerBead)
+
+    const lowerRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.26, 0.05, 16, 32),
+      steelMat
+    )
+    lowerRing.rotation.x = Math.PI / 2
+    lowerRing.position.y = -1.13
+    lowerRing.castShadow = true
+    key.add(lowerRing)
+
+    // --- 6.5 Base del paletón (caja rectangular) ---
+    const bitBase = new THREE.Mesh(
+      new THREE.BoxGeometry(0.36, 1.05, 0.48),
+      wornSteelMat
+    )
+    bitBase.position.set(0, -2.10, 0)
+    bitBase.castShadow = true
+    bitBase.receiveShadow = true
+    key.add(bitBase)
+
+    // --- 6.6 Dientes (paletón) — 4 dientes rectangulares hacia un lado ---
+    // Patrón warded: dos dientes superiores cortos + uno largo abajo + final
+    const teethConfig = [
+      { y: -1.78, w: 0.55, h: 0.22, depth: 0.50 }, // diente sup
+      { y: -2.06, w: 0.38, h: 0.22, depth: 0.50 }, // diente medio (más corto, crea entalladura)
+      { y: -2.34, w: 0.62, h: 0.22, depth: 0.50 }, // diente principal
+      { y: -2.60, w: 0.30, h: 0.18, depth: 0.50 }, // talón final
+    ]
+    teethConfig.forEach((t) => {
+      const tooth = new THREE.Mesh(
+        new THREE.BoxGeometry(t.w, t.h, t.depth),
+        wornSteelMat
+      )
+      // Posición: el diente arranca en el borde derecho de la base y se extiende fuera
+      const baseHalfWidth = 0.36 / 2
+      tooth.position.set(baseHalfWidth + t.w / 2 - 0.01, t.y, 0)
+      tooth.castShadow = true
+      tooth.receiveShadow = true
+      key.add(tooth)
+    })
+
+    // Centrar el grupo verticalmente para que rote sobre su centro óptico
+    key.position.y = -0.3
+
+    // =====================================================================
+    // 7. SUELO INVISIBLE — recoge sombra suave para anclar el objeto
+    // =====================================================================
+    const shadowPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(20, 20),
+      new THREE.ShadowMaterial({ opacity: 0.35 })
+    )
+    shadowPlane.rotation.x   = -Math.PI / 2
+    shadowPlane.position.y   = -3.6
+    shadowPlane.receiveShadow= true
+    scene.add(shadowPlane)
+
+    // =====================================================================
+    // 8. CONTROLS — rotación manual con drag/touch + auto-rotate
+    // =====================================================================
+    const controls = new OrbitControls(camera, canvas)
+    controls.enableDamping     = true
+    controls.dampingFactor     = 0.08
+    controls.enablePan         = false
+    controls.enableZoom        = true
+    controls.minDistance       = 7
+    controls.maxDistance       = 18
+    controls.minPolarAngle     = Math.PI * 0.15
+    controls.maxPolarAngle     = Math.PI * 0.85
+    controls.autoRotate        = true
+    controls.autoRotateSpeed   = 0.9              // rad/s aprox
+    controls.target.set(0, 0, 0)
+
+    // Pausar auto-rotate brevemente al interactuar
+    let userInteracting = false
+    let resumeTimer = null
+    controls.addEventListener('start', () => {
+      userInteracting = true
+      controls.autoRotate = false
+      if (resumeTimer) clearTimeout(resumeTimer)
+    })
+    controls.addEventListener('end', () => {
+      userInteracting = false
+      // Reanudar auto-rotate tras 1.8s de inactividad
+      if (resumeTimer) clearTimeout(resumeTimer)
+      resumeTimer = setTimeout(() => {
+        if (!userInteracting) controls.autoRotate = true
+      }, 1800)
+    })
+
+    // =====================================================================
+    // 9. RESIZE
+    // =====================================================================
+    window.addEventListener('resize', () => {
+      const w = window.innerWidth
+      const h = window.innerHeight
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+      renderer.setSize(w, h)
+    })
+
+    // =====================================================================
+    // 10. ANIMATION LOOP
+    // =====================================================================
+    function tick() {
+      controls.update()
+      renderer.render(scene, camera)
+      requestAnimationFrame(tick)
+    }
+    tick()
+  </script>
+</body>
+</html>
