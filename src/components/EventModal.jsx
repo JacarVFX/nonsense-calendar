@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   collection, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, deleteField,
 } from 'firebase/firestore'
-import { db, auth } from '../firebase'
+import { db } from '../firebase'
 
 const CATEGORIES = [
   { value: 'grab', label: 'GRABACIÓN', multiDay: true },
@@ -44,7 +44,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
       return
     }
     setSaving(true)
-    console.log('[nonsense] save:start', { isEdit, uid: auth?.currentUser?.uid, cat, date, dateEnd })
+    console.log('[nonsense] save:start', { isEdit, cat, date, dateEnd })
     try {
       const data = {
         name: name.trim(),

@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
 import { initializeFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -12,19 +11,15 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
 
-// Force long polling — definitively sidesteps the WebChannel handshake
-// loop that some browser/network combos trigger (third-party cookie
-// blocking, ad-blockers, corporate proxies, etc.). Slightly higher
-// latency than WebChannel but stable everywhere.
+// Force long polling — sidesteps the WebChannel handshake loop that
+// some browser/network combos trigger.
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 })
 
-// Debug exposure — read these from console:
-//   __nsdebug.auth.currentUser?.uid  → current anon user id (or undefined)
-//   __nsdebug.db                     → firestore instance
+// Debug exposure — read from console:
+//   __nsdebug.db → firestore instance
 if (typeof window !== 'undefined') {
-  window.__nsdebug = { auth, db, app }
+  window.__nsdebug = { db, app }
 }
