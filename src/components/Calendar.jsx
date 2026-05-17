@@ -9,6 +9,15 @@ const WEEKDAYS = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM']
 function pad2(n) { return String(n).padStart(2, '0') }
 function fmt(y, m, d) { return `${y}-${pad2(m + 1)}-${pad2(d)}` }
 
+// ISO 8601 week number — semana del jueves.
+function isoWeek(y, m, d) {
+  const date = new Date(Date.UTC(y, m, d))
+  const dayNum = date.getUTCDay() || 7
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum)
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1))
+  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7)
+}
+
 function expandEventDays(ev) {
   if (!ev.dateEnd || ev.dateEnd <= ev.date) return [{ dateStr: ev.date, isFirst: true }]
   const [y1, m1, d1] = ev.date.split('-').map(Number)
@@ -41,15 +50,35 @@ export default function Calendar({ currentDate, setCurrentDate, events, onDayCli
   for (let i = 0; i < firstWeekday; i++) {
     const day = daysInPrev - firstWeekday + 1 + i
     const d = new Date(year, month - 1, day)
-    cells.push({ day, dateStr: fmt(d.getFullYear(), d.getMonth(), day), inMonth: false })
+    cells.push({
+      day,
+      dateStr: fmt(d.getFullYear(), d.getMonth(), day),
+      inMonth: false,
+      weekdayIdx: i,                                 // 0 = LUN, 6 = DOM
+      week: isoWeek(d.getFullYear(), d.getMonth(), day),
+    })
   }
   for (let d = 1; d <= daysInMonth; d++) {
-    cells.push({ day: d, dateStr: fmt(year, month, d), inMonth: true })
+    const idx = cells.length % 7
+    cells.push({
+      day: d,
+      dateStr: fmt(year, month, d),
+      inMonth: true,
+      weekdayIdx: idx,
+      week: isoWeek(year, month, d),
+    })
   }
   let nd = 1
   while (cells.length < 42) {
+    const idx = cells.length % 7
     const d = new Date(year, month + 1, nd)
-    cells.push({ day: nd, dateStr: fmt(d.getFullYear(), d.getMonth(), nd), inMonth: false })
+    cells.push({
+      day: nd,
+      dateStr: fmt(d.getFullYear(), d.getMonth(), nd),
+      inMonth: false,
+      weekdayIdx: idx,
+      week: isoWeek(d.getFullYear(), d.getMonth(), nd),
+    })
     nd++
   }
 
@@ -82,17 +111,23 @@ export default function Calendar({ currentDate, setCurrentDate, events, onDayCli
       <div className="weekday-row">
         {WEEKDAYS.map((w) => <div key={w} className="weekday">{w}</div>)}
       </div>
-      <div className="grid">
-        {cells.map((cell, i) => (
-          <DayCell
-            key={i}
-            cell={cell}
-            entries={byDate[cell.dateStr] || []}
-            isToday={cell.dateStr === todayStr}
-            onDayClick={onDayClick}
-            onEventClick={onEventClick}
-          />
-        ))}
+      <div className="grid-wrap">
+        <span className="reg-mark tl" aria-hidden="true">+</span>
+        <span className="reg-mark tr" aria-hidden="true">+</span>
+        <span className="reg-mark bl" aria-hidden="true">+</span>
+        <span className="reg-mark br" aria-hidden="true">+</span>
+        <div className="grid">
+          {cells.map((cell, i) => (
+            <DayCell
+              key={i}
+              cell={cell}
+              entries={byDate[cell.dateStr] || []}
+              isToday={cell.dateStr === todayStr}
+              onDayClick={onDayClick}
+              onEventClick={onEventClick}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )

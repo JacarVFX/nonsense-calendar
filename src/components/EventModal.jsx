@@ -177,7 +177,7 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
                 onClick={handleDelete}
                 disabled={deleting || saving}
               >
-                {deleting ? 'BORRANDO...' : 'BORRAR'}
+                {deleting ? (<><span className="oe-spin" aria-hidden="true">Ø</span> BORRANDO</>) : 'BORRAR'}
               </button>
             )}
             <div className="spacer" />
@@ -185,7 +185,9 @@ export default function EventModal({ event, defaultDate, onClose, onError }) {
               CANCELAR
             </button>
             <button type="submit" className="btn-primary" disabled={saving || deleting}>
-              {saving ? 'guardando…' : 'guardar'}
+              {saving ? (
+                <><span className="oe-spin" aria-hidden="true">Ø</span> guardando</>
+              ) : 'guardar'}
             </button>
           </div>
         </form>

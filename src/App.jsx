@@ -5,6 +5,9 @@ import Calendar from './components/Calendar'
 import Sidebar from './components/Sidebar'
 import EventModal from './components/EventModal'
 import InstallHint from './components/InstallHint'
+import SplashScreen from './components/SplashScreen'
+import StatusDot from './components/StatusDot'
+import Footer from './components/Footer'
 
 function todayStr() {
   const d = new Date()
@@ -21,6 +24,7 @@ export default function App() {
   const [editingEvent, setEditingEvent] = useState(null)
   const [defaultDate, setDefaultDate] = useState(null)
   const [toast, setToast] = useState(null)
+  const [syncStatus, setSyncStatus] = useState('syncing')   // 'syncing' | 'ok' | 'error'
 
   const showToast = useCallback((msg) => {
     setToast(msg)
@@ -31,9 +35,13 @@ export default function App() {
     const q = query(collection(db, 'events'), orderBy('date'))
     return onSnapshot(
       q,
-      (snap) => setEvents(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+      (snap) => {
+        setEvents(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+        setSyncStatus('ok')
+      },
       (err) => {
         console.error('[nonsense] firestore listen error:', err)
+        setSyncStatus('error')
         showToast('Error de conexión con la base de datos')
       }
     )
@@ -58,47 +66,55 @@ export default function App() {
   }, [])
 
   return (
-    <div className="app">
-      <header className="header">
-        <div className="logo-block">
-          <h1 className="logo" aria-label="Nonsense">
-            N<span className="slashed">Ø</span>NSENSE
-          </h1>
-          <div className="subtitle">PRODUCTION CALENDAR · 0001</div>
-        </div>
-        <div className="header-meta">
-          NS / CAL<br />
-          REV 0001 — 2026
-        </div>
-      </header>
+    <>
+      <SplashScreen />
+      <div className="app">
+        <header className="header">
+          <div className="logo-block">
+            <h1 className="logo" aria-label="Nonsense">
+              N<span className="slashed">Ø</span>NSENSE
+            </h1>
+            <div className="subtitle">PRODUCTION CALENDAR · 0001</div>
+          </div>
+          <div className="header-meta">
+            <StatusDot status={syncStatus} />
+            <div className="header-meta-text">
+              NS / CAL<br />
+              REV 0001 — 2026
+            </div>
+          </div>
+        </header>
 
-      <main className="main">
-        <Calendar
-          currentDate={currentDate}
-          setCurrentDate={setCurrentDate}
-          events={events}
-          onDayClick={openNewEvent}
-          onEventClick={openEditEvent}
-        />
-        <Sidebar
-          currentDate={currentDate}
-          events={events}
-          onNewEvent={() => openNewEvent(todayStr())}
-          onEventClick={openEditEvent}
-        />
-      </main>
+        <main className="main">
+          <Calendar
+            currentDate={currentDate}
+            setCurrentDate={setCurrentDate}
+            events={events}
+            onDayClick={openNewEvent}
+            onEventClick={openEditEvent}
+          />
+          <Sidebar
+            currentDate={currentDate}
+            events={events}
+            onNewEvent={() => openNewEvent(todayStr())}
+            onEventClick={openEditEvent}
+          />
+        </main>
 
-      {modalOpen && (
-        <EventModal
-          event={editingEvent}
-          defaultDate={defaultDate}
-          onClose={closeModal}
-          onError={showToast}
-        />
-      )}
+        <Footer />
 
-      {toast && <div className="toast">{toast}</div>}
-      <InstallHint />
-    </div>
+        {modalOpen && (
+          <EventModal
+            event={editingEvent}
+            defaultDate={defaultDate}
+            onClose={closeModal}
+            onError={showToast}
+          />
+        )}
+
+        {toast && <div className="toast">{toast}</div>}
+        <InstallHint />
+      </div>
+    </>
   )
 }

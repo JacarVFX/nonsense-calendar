@@ -1,8 +1,7 @@
-const M_SHORT = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-
+// Formato brutalista: DD.MM (date stamp técnico).
 function formatShortDate(d) {
   const [, m, day] = d.split('-')
-  return `${day} ${M_SHORT[parseInt(m, 10) - 1]}`
+  return `${day}.${m}`
 }
 
 function formatRange(start, end) {
@@ -107,7 +106,11 @@ export default function Sidebar({ currentDate, events, onNewEvent, onEventClick 
           <span className="code-tag">0213</span> próximos
         </h3>
         {upcoming.length === 0 ? (
-          <div className="empty">SIN EVENTOS PRÓXIMOS</div>
+          <div className="empty">
+            <div className="empty-code">0000</div>
+            <div className="empty-line">espacio vacío.</div>
+            <div className="empty-line muted">esperando el sinsentido.</div>
+          </div>
         ) : (
           <div className="upcoming-list">
             {upcoming.map((ev) => (

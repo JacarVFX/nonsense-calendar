@@ -3,13 +3,25 @@ export default function DayCell({ cell, entries, isToday, onDayClick, onEventCli
   const extra = entries.length - visible.length
 
   const handleCellClick = () => onDayClick(cell.dateStr)
+  const isWeekend = cell.weekdayIdx >= 5            // 5 = SÁB, 6 = DOM
+  const isMonday = cell.weekdayIdx === 0
+
+  const classes = [
+    'day-cell',
+    !cell.inMonth ? 'out' : '',
+    isToday ? 'today' : '',
+    isWeekend ? 'weekend' : '',
+  ].filter(Boolean).join(' ')
 
   return (
-    <div
-      className={`day-cell ${!cell.inMonth ? 'out' : ''} ${isToday ? 'today' : ''}`}
-      onClick={handleCellClick}
-    >
-      <div className="day-number">{cell.day}</div>
+    <div className={classes} onClick={handleCellClick}>
+      {isMonday && cell.inMonth && (
+        <span className="week-number" aria-label={`Semana ${cell.week}`}>W{String(cell.week).padStart(2, '0')}</span>
+      )}
+      <div className="day-number">
+        {isToday && <span className="today-mark" aria-hidden="true">Ø</span>}
+        {cell.day}
+      </div>
       <div className="events">
         {visible.map(({ ev, isFirst }) => (
           <button
